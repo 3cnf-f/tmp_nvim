@@ -1,6 +1,11 @@
 ```bash
-apt update && apt upgrade -y &&apt install -y nano git curl wget xz-utils zstd unzip iproute2 &&apt install -y python3-pip python3-venv pipx python3-flask
-```    
+apt update && apt upgrade -y &&apt install -y nano git curl wget xz-utils zstd unzip iproute2 
+```
+
+```bash
+
+apt install -y python3-pip python3-venv pipx python3-flask
+```
 
 ```bash
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
@@ -16,13 +21,19 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 
 ##shit to add to .bashrc
 ```bash
+cat >>~/.bashrc<<__EOF__
+
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+__EOF__
 ```
 
 ##shit to add to bash_aliases
 ```bash
+cat >>~/.bash_aliases<<__EOF__
+ 
+
 alias nvfz='nvim $(fzf --preview="cat {}")'
 
 alias g-acm='git add . && git commit -a -m "g-acm alias" && git push'
+__EOF__
 ```
