@@ -16,12 +16,13 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 
 ##shit to add to .bashrc
 ```bash
-nvfz='nvim $(fzf --preview="cat {}")'
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 ```
 
 ##shit to add to bash_aliases
 ```bash
+alias nvfz='nvim $(fzf --preview="cat {}")'
+
 alias g-acm='git add . && git commit -a -m "g-acm alias" && git push'
 ```
