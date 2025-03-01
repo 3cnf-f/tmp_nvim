@@ -5,7 +5,7 @@ apt update && apt upgrade -y &&apt install -y nano git curl wget xz-utils zstd u
 ```bash
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
 
-git clone https://github.com/3cnf-f/tmp_nvim.git ~/
+git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config
 ```
 ##install fzf
 
