@@ -21,7 +21,8 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 
 ##shit to add to .bashrc / bashaliases
 ```bash
-cat ~/.config/addto_bashrc >>~/.bashrc
-cat ~/.config/addto_bashaliases >>~/.bash_aliases
+cat ~/.config/addto_bashrc >>~/.bashrc &&\
+cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
+source ~/.bashrc
 
 ```
