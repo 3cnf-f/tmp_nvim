@@ -19,21 +19,9 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 ~/.fzf/install
 ```
 
-##shit to add to .bashrc
+##shit to add to .bashrc / bashaliases
 ```bash
-cat >>~/.bashrc<<__EOF__
+cat ~/.config/addto_bashrc >>~/.bashrc
+cat ~/.config/addto_bashaliases >>~/.bashaliases
 
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-__EOF__
-```
-
-##shit to add to bash_aliases
-```bash
-cat >>~/.bash_aliases<<__EOF__
- 
-
-alias nvfz='nvim $(fzf --preview="cat {}")'
-
-alias g-acm='git add . && git commit -a -m "g-acm alias" && git push'
-__EOF__
 ```
