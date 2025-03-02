@@ -16,7 +16,7 @@ git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 
 ```bash
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
-~/.fzf/install
+~/.fzf/install --all
 ```
 
 ##shit to add to .bashrc / bashaliases
