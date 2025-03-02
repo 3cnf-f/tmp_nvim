@@ -10,7 +10,7 @@ apt install -y python3-pip python3-venv pipx python3-flask
 ```bash
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
 
-git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config
+git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 ```
 ##install fzf
 
