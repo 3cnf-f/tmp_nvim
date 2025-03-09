@@ -23,6 +23,7 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 ```bash
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
+cat ~/.config/addt_ssh_config >>~/.ssh/config
 source ~/.bashrc
 
 ```
