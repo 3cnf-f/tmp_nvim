@@ -1,2 +1,4 @@
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export FZF_DEFAULT_COMMAND='find . -type f' 
+echo "----aliases-------"
+cat ~/.bash_aliases
