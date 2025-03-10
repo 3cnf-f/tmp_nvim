@@ -29,8 +29,7 @@ export LC_MEASUREMENT=sv_SE.UTF-8 &&\
 export LC_IDENTIFICATION=sv_SE.UTF-8 &&\
 export LC_ALL= &&\
 locale-gen
-
-``
+```
 
 
 ```bash
