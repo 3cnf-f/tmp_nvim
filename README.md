@@ -7,8 +7,21 @@ TMP_GITEMAIL="<git_email>"
 ```bash
 DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
-## set locales
-```bash
+## set locales .. move this to a addto .bash
+fix /etc/locale.gen
+fix run locale-gen
+fix install locales
+fix /etc/default/locale
+```bash  sv_SE.UTF-8
+apt-get install -y locales \
+    && echo "en_US.UTF-8 " > /etc/locale.gen \
+    && echo "UTF-8 " > /etc/locale.gen \    
+    && echo "sv_SE.UTF-8 " > /etc/locale.gen \
+
+    && locale-gen \
+    && echo "LANG=en_US.UTF-8" > /etc/default/locale
+
+
 apt install -y locales &&\
 export LANG=en_US.UTF-8  &&\
 export LANGUAGE=en_US.UTF-8  &&\
