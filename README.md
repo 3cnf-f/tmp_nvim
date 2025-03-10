@@ -8,40 +8,17 @@ TMP_GITEMAIL="<git_email>"
 DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
 ## set locales .. move this to a addto .bash
-fix /etc/locale.gen
-fix run locale-gen
-fix install locales
-fix /etc/default/locale
+
 ```bash  sv_SE.UTF-8
 apt-get install -y locales \
-    && echo "en_US.UTF-8 " > /etc/locale.gen \
-    && echo "UTF-8 " > /etc/locale.gen \    
-    && echo "sv_SE.UTF-8 " > /etc/locale.gen \
+    && cat add_locale_to_bashrc >> ~/.bashrc \
+    && cat addto_def_locale >> ~/etc/default/locale \
+    && cat add_locale_gen >>  /etc/locale.gen\
+
+
 
     && locale-gen \
-    && echo "LANG=en_US.UTF-8" > /etc/default/locale
-
-
-apt install -y locales &&\
-export LANG=en_US.UTF-8  &&\
-export LANGUAGE=en_US.UTF-8  &&\
-export LC_ALL=en_US.UTF-8  &&\
-export LANG=en_US.UTF-8 &&\
-export LANGUAGE=en_US &&\
-export LC_CTYPE="en_US.UTF-8" &&\
-export LC_NUMERIC=sv_SE.UTF-8 &&\
-export LC_TIME="en_US.UTF-8" &&\
-export LC_COLLATE="en_US.UTF-8" &&\
-export LC_MONETARY=sv_SE.UTF-8 &&\
-export LC_MESSAGES="en_US.UTF-8" &&\
-export LC_PAPER=sv_SE.UTF-8 &&\
-export LC_NAME=sv_SE.UTF-8 &&\
-export LC_ADDRESS=sv_SE.UTF-8 &&\
-export LC_TELEPHONE=sv_SE.UTF-8 &&\
-export LC_MEASUREMENT=sv_SE.UTF-8 &&\
-export LC_IDENTIFICATION=sv_SE.UTF-8 &&\
-export LC_ALL= &&\
-locale-gen
+   
 ```
 
 
