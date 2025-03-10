@@ -7,6 +7,14 @@ TMP_GITEMAIL="<git_email>"
 ```bash
 DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
+
+## get nvim and clone this repo
+```bash
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
+
+git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
+```
+
 ##shit to add to .bashrc / bashaliases
 ```bash
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
@@ -17,19 +25,13 @@ source ~/.bashrc
 
 ```
 
-## get nvim and clone this repo
-```bash
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
-
-git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
-```
 
 ## set locales .. move this to a addto .bash
 
 ```bash  sv_SE.UTF-8
 apt-get install -y locales \
     && cat ~/.config/add_locale_to_bashrc >> ~/.bashrc \
-    && cat ~/.config/addto_def_locale >> ~/etc/default/locale \
+    && cat ~/.config/addto_def_locale >> /etc/default/locale \
     && cat ~/.config/add_locale_gen >>  /etc/locale.gen\
 
 
