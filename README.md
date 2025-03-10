@@ -5,7 +5,7 @@ TMP_GITEMAIL="<git_email>"
 ```
 
 ```bash
-DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y nano git curl wget xz-utils zstd unzip iproute2 
+DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
 
 ```bash
