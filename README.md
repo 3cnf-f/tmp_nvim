@@ -27,9 +27,9 @@ git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 
 ```bash  sv_SE.UTF-8
 apt-get install -y locales \
-    && cat add_locale_to_bashrc >> ~/.bashrc \
-    && cat addto_def_locale >> ~/etc/default/locale \
-    && cat add_locale_gen >>  /etc/locale.gen\
+    && cat ~/.config/add_locale_to_bashrc >> ~/.bashrc \
+    && cat ~/.config/addto_def_locale >> ~/etc/default/locale \
+    && cat ~/.config/add_locale_gen >>  /etc/locale.gen\
 
 
 
