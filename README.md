@@ -11,6 +11,7 @@ DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&a
 ```bash
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
+mkdir ~/.ssh &&\
 cat ~/.config/addt_ssh_config >>~/.ssh/config
 source ~/.bashrc
 
