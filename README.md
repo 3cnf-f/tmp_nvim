@@ -7,6 +7,22 @@ TMP_GITEMAIL="<git_email>"
 ```bash
 DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
+##shit to add to .bashrc / bashaliases
+```bash
+cat ~/.config/addto_bashrc >>~/.bashrc &&\
+cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
+cat ~/.config/addt_ssh_config >>~/.ssh/config
+source ~/.bashrc
+
+```
+
+## get nvim and clone this repo
+```bash
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
+
+git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
+```
+
 ## set locales .. move this to a addto .bash
 
 ```bash  sv_SE.UTF-8
@@ -27,11 +43,7 @@ apt-get install -y locales \
 apt install -y python3-pip python3-venv pipx python3-flask
 ```
 
-```bash
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&rm -rf /opt/nvim &&tar -C /opt -xzf nvim-linux-x86_64.tar.gz &&\
 
-git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
-```
 ##install fzf
 
 ```bash
@@ -60,11 +72,4 @@ git config --global commit.gpgsign true &&\
 
 ```
 
-##shit to add to .bashrc / bashaliases
-```bash
-cat ~/.config/addto_bashrc >>~/.bashrc &&\
-cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
-cat ~/.config/addt_ssh_config >>~/.ssh/config
-source ~/.bashrc
 
-```
