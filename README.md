@@ -7,6 +7,31 @@ TMP_GITEMAIL="<git_email>"
 ```bash
 DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
 ```
+## set locales
+```bash
+apt install -y locales &&\
+export LANG=en_US.UTF-8  &&\
+export LANGUAGE=en_US.UTF-8  &&\
+export LC_ALL=en_US.UTF-8  &&\
+export LANG=en_US.UTF-8 &&\
+export LANGUAGE=en_US &&\
+export LC_CTYPE="en_US.UTF-8" &&\
+export LC_NUMERIC=sv_SE.UTF-8 &&\
+export LC_TIME="en_US.UTF-8" &&\
+export LC_COLLATE="en_US.UTF-8" &&\
+export LC_MONETARY=sv_SE.UTF-8 &&\
+export LC_MESSAGES="en_US.UTF-8" &&\
+export LC_PAPER=sv_SE.UTF-8 &&\
+export LC_NAME=sv_SE.UTF-8 &&\
+export LC_ADDRESS=sv_SE.UTF-8 &&\
+export LC_TELEPHONE=sv_SE.UTF-8 &&\
+export LC_MEASUREMENT=sv_SE.UTF-8 &&\
+export LC_IDENTIFICATION=sv_SE.UTF-8 &&\
+export LC_ALL= &&\
+locale-gen
+
+``
+
 
 ```bash
 
