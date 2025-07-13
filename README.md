@@ -32,7 +32,7 @@ source ~/.bashrc
 apt-get install -y locales \
     && cat ~/.config/add_locale_to_bashrc >> ~/.bashrc \
     && cat ~/.config/addto_def_locale >> /etc/default/locale \
-    && cat ~/.config/add_locale_gen >>  /etc/locale.gen\
+    && cat ~/.config/addto_locale_gen >>  /etc/locale.gen\
 
 
 
