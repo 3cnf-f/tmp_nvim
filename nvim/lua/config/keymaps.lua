@@ -68,6 +68,10 @@ km.set(
 km.set(
   "n",
   "<leader>ca",
+  
+  ":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
+  { desc = "Code Actions" }
+)
 
 -- cmp keymaps  
 -- vim.keymap.set("i", "<A-Space>", function() cmp.complete() end, { expr = true, silent = true })
@@ -82,6 +86,3 @@ vim.keymap.set("i", "<A-l>", function() if cmp.visible() then cmp.confirm({ sele
 vim.keymap.set("i", "<A-h>", function() if cmp.visible() then cmp.close() end end, { silent = true })
 
   
-  ":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
-  { desc = "Code Actions" }
-)
