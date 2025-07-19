@@ -68,6 +68,20 @@ km.set(
 km.set(
   "n",
   "<leader>ca",
+
+-- cmp keymaps  
+-- vim.keymap.set("i", "<A-Space>", function() cmp.complete() end, { expr = true, silent = true })
+
+local cmp = require("cmp")
+
+
+vim.keymap.set("i", "<A-c>", function() cmp.complete() end, { silent = true })
+vim.keymap.set("i", "<A-k>", function() if cmp.visible() then cmp.select_prev_item() end end, { silent = true })
+vim.keymap.set("i", "<A-j>", function() if cmp.visible() then cmp.select_next_item() end end, { silent = true })
+vim.keymap.set("i", "<A-l>", function() if cmp.visible() then cmp.confirm({ select = true }) end end, { silent = true })
+vim.keymap.set("i", "<A-h>", function() if cmp.visible() then cmp.close() end end, { silent = true })
+
+  
   ":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
   { desc = "Code Actions" }
 )
