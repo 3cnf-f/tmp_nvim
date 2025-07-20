@@ -76,13 +76,12 @@ km.set(
 -- cmp keymaps  
 -- vim.keymap.set("i", "<A-Space>", function() cmp.complete() end, { expr = true, silent = true })
 
-local cmp = require("cmp")
+local neocodeium = require("neocodeium")
+
+vim.keymap.set("i", "<A-l>", neocodeium.accept)
+vim.keymap.set("i", "<A-j>", function() require("neocodeium").cycle_or_complete() end)
+vim.keymap.set("i", "<A-k>", function() require("neocodeium").cycle_or_complete(-1) end)
+vim.keymap.set("i", "<A-h>", neocodeium.clear)
+vim.keymap.set("i", "<A-c>", neocodeium.cycle_or_complete)
 
 
-vim.keymap.set("i", "<A-c>", function() cmp.complete() end, { silent = true })
-vim.keymap.set("i", "<A-k>", function() if cmp.visible() then cmp.select_prev_item() end end, { silent = true })
-vim.keymap.set("i", "<A-j>", function() if cmp.visible() then cmp.select_next_item() end end, { silent = true })
-vim.keymap.set("i", "<A-l>", function() if cmp.visible() then cmp.confirm({ select = true }) end end, { silent = true })
-vim.keymap.set("i", "<A-h>", function() if cmp.visible() then cmp.close() end end, { silent = true })
-
-  
