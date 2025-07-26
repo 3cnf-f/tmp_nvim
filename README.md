@@ -57,9 +57,15 @@ apt-get install -y locales \
    
 ```
 
-install tmux w tpm
+install tmux w tpm plugins
 ```bash
-cat ~/.config/.tmux.conf >>~/.tmux.conf
+cat ~/.config/.tmux.conf >>~/.tmux.conf &&\
+mkdir -p ~/.tmux/plugins &&\
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm 
+
+echo "on first run do leader +ä to load conf"
+echo "then leader + I to install tpm plugins"
+echo "§ is prefix, ä is reload tmux.conf"
 ```
 
 ```bash
