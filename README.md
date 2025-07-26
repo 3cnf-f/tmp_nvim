@@ -57,6 +57,10 @@ apt-get install -y locales \
    
 ```
 
+install tmux w tpm
+```bash
+cat ~/.config/.tmux.conf >>~/.tmux.conf
+```
 
 ```bash
 
