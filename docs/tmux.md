@@ -1,8 +1,13 @@
  #TMUX
  
- § is prefix 
- ä is reload tmux.conf
+ * § is prefix 
+ * ä is reload tmux.conf
  
- On first run do leader +ä to load conf then leader + I to install tpm plugins 
- try leader +s to save session 
- and next session leader +r to reload session
+ * I to install tpm plugins ( important to do the first time)
+ * s to save session
+ * r to reload session
+
+ * " split horiz
+ * % split vert
+ * x close pane
+ * c new window 
