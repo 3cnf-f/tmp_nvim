@@ -11,4 +11,7 @@
  * " split horiz
  * % split vert
  * x close pane
- * c new window 
+ * c new window
+
+ * Shift+mouse select to copy
+ * middle mouse to pastes
