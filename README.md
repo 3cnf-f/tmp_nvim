@@ -12,7 +12,7 @@ TMP_GITEMAIL="<git_email>"
 ```
 
 ```bash
-DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 
+DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 tmux
 ```
 
 ## get nvim and clone this repo
@@ -23,7 +23,11 @@ git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 ```
 
 ##shit to add to .bashrc / bashaliases
+##move .tmux.conf,  install tpm
 ```bash
+cat ~/.config/.tmux.conf >>~/.tmux.conf &&\
+mkdir -p ~/.tmux/plugins &&\
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm &&\
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
 mkdir ~/.ssh &&\
@@ -47,21 +51,7 @@ apt-get install -y locales \
    
 ```
 
-install tmux w tpm plugins
-```bash
-cat ~/.config/.tmux.conf >>~/.tmux.conf &&\
-mkdir -p ~/.tmux/plugins &&\
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm &&\
 
-echo &&\
-echo "******" &&\
-echo "§ is prefix, ä is reload tmux.conf" &&\echo &&\
-echo "*******" &&\
-echo "On first run do leader +ä to load conf" && echo &&\
-echo "then leader + I to install tpm plugins" && echo &&\
-echo "try leader +s to save session" && echo &&\
-echo "or leader +r t" && echo &&\
-```
 
 ```bash
 
