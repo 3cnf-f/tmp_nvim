@@ -14,4 +14,8 @@
  * c new window
 
  * Shift+mouse select to copy
- * middle mouse to pastes
+ * shift+middle mouse to paste in shell or middle mouse in system
+
+   copy mode copying:
+ * [ to enter copy mode C-space to select C-w to copy
+* ] to paste
