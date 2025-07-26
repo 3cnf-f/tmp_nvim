@@ -1,3 +1,15 @@
+### tpm install/reload notes
+```
+Install plugins: Press Ctrl-b then Shift-I (capital I). This fetches and installs the plugins listed in your config.
+TPM will clone the plugins into ~/.tmux/plugins/. It may take a moment—watch for output like "TPM: plugins installed."
+Exit tmux: Press Ctrl-b then d to detach (session persists).
+Step 6: Test and Use
+Reattach to the session: tmux attach (or tmux a for short).
+Verify plugins: For example, if you added tmux-resurrect, press Ctrl-b then Ctrl-s to save the session, or Ctrl-r to restore.
+To add/remove plugins later: Edit ~/.tmux.conf, reload with Ctrl-b :source ~/.tmux.conf, then Ctrl-b Shift-I to update.
+```
+
+
 ### setup windsurf, to get the token from a container w no clipboard or browser capabilities
 ```
 https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
