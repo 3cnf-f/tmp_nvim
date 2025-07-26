@@ -65,9 +65,12 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm &&\
 
 echo &&\
 echo "******" &&\
+echo "§ is prefix, ä is reload tmux.conf" &&\echo &&\
+echo "*******" &&\
 echo "On first run do leader +ä to load conf" && echo &&\
 echo "then leader + I to install tpm plugins" && echo &&\
-echo "§ is prefix, ä is reload tmux.conf" &&\echo
+echo "try leader +s to save session" && echo &&\
+echo "or leader +r t" && echo &&\
 ```
 
 ```bash
