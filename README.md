@@ -85,15 +85,15 @@ git config --global commit.gpgsign true &&\
 
 ## to make an identical branch as backup
 ```
-Clone repo if needed: git clone <repo-url>
-Navigate: cd <repo-folder>
-Update main: git checkout main && git pull
+
 Create branch: git checkout -b backup-branch
-Push branch: git push origin backup-branch
-Switch to main: git checkout main
+git checkout -b flash
+git commit .
+git push --set-upstream origin flash
+git push
+ 
 ```
 
 
-```
 
 
