@@ -1,4 +1,5 @@
-
+## til for loads of stuff including tmux and nvim
+https://github.com/jbranchaud/til
 
 ### setup windsurf, to get the token from a container w no clipboard or browser capabilities
 ```
