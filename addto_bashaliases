@@ -1,3 +1,4 @@
 
 alias nvfz='nvim $(fzf --preview="cat {}")'
+alias f_docs='ls ~/docs'
 
