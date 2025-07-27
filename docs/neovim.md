@@ -15,6 +15,7 @@ Example: Try on text `"this is a stupid text"`.
 ## Normal Mode
 - `ZZ` save and quit
 - `ZQ` DONT save and quit
+- `read filename` insert file into current buffer
 
 ### Movement
 - `gg`: Move to first line of file.
