@@ -64,6 +64,7 @@ Certain movements are added to the jumplist (navigate with `C-o` back, `C-i` for
 - `ciw`: Change inside word (delete word and insert).
 - `diw`: Delete inside word.
 - `diW`: Delete inside WORD (till whitespace).
+- `daw`: Delete a word includes whitespace
 - `3dd`: Delete 3 lines.
 - `d/poop`: Delete until "poop".
 - `d0`: Delete to start of line.
