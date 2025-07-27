@@ -13,7 +13,8 @@ This is a tidied version of your notes on Vim/Neovim shortcuts, commands, and fe
 Example: Try on text `"this is a stupid text"`.
 
 ## Normal Mode
-- ZZ save and quit
+- `ZZ` save and quit
+- `ZQ` DONT save and quit
 
 ### Movement
 - `gg`: Move to first line of file.
