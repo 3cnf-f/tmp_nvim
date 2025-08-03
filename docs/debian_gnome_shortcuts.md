@@ -6,6 +6,7 @@ Alt + Tab - Switch between applications
 Alt + Shift + Tab - Switch between applications (reverse)
 Alt + F4 - Close window
 Super + H - Hide/minimize window
+Super + A -show all apps
 
 Workspace Navigation:
 
