@@ -96,8 +96,9 @@ git push
 ```
 save pip requirements but only modules that are used
 pip install pipreqs
-pipreqs path
 
+# Scan recursively but ignore common non-source directories
+pipreqs . --ignore .venv,venv,archive,tests,__pycache__,.pytest_cache,.git --force
 
 
 
