@@ -94,6 +94,9 @@ git push --set-upstream origin flash
 git push
  
 ```
+save pip requirements but only modules that are used
+pip install pipreqs
+pipreqs path
 
 
 
