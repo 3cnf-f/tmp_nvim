@@ -100,7 +100,7 @@ pip install pipreqs
 # Scan recursively but ignore common non-source directories
 pipreqs . --ignore .venv,venv,archive,tests,__pycache__,.pytest_cache,.git --force
 
-
+```
 
 large file dl from google drive with curl
 
