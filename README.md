@@ -105,5 +105,4 @@ pipreqs . --ignore .venv,venv,archive,tests,__pycache__,.pytest_cache,.git --for
 large file dl from google drive with curl
 
 ```
-https://drive.usercontent.google.com/download?id={fileId}&confirm=xxx
-```
+curl "https://drive.usercontent.google.com/download?id={fileId}&confirm=xxx" -o filename```
