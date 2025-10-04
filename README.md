@@ -83,13 +83,13 @@ git remote set-url origin <git ssh url>
 ```
 
 ## add commit push
-```
+
 ```
 git commit -a -m "yes" &&\
 git push
 ```
 
-```
+
 
 ## setup git for add and commit
 ## to make an identical branch as backup
