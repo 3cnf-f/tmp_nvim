@@ -85,7 +85,8 @@ git remote set-url origin <git ssh url>
 ## add commit push
 
 ```
-git commit -a -m "yes" &&\
+git add .
+git commit -m "yes" &&\
 git push
 ```
 
