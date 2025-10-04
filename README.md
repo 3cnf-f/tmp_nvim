@@ -6,10 +6,14 @@ https://github.com/jbranchaud/til
 https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
 ```
 
-### set envs
+### paste secret email
 ```bash
-TMP_GITUSER="<git_username>"
-TMP_GITEMAIL="<git_email>"
+export TMP_GITEMAIL=""
+```
+```
+git config --global user.email $TMP_GITUSER  \&&
+git config --global user.name 3cnf-f
+
 ```
 
 ```bash
@@ -74,22 +78,31 @@ ssh-keygen -t ed25519 -C $(TMP_GITEMAIL) -f ~/.ssh/git_ed25519
 
 ## when in a repo setup git remote url so that it doesnt try to acess with http
 ```bash
-git remote set-url origin git@github.com:<github_user>/<repo_name>.git
+git remote set-url origin <git ssh url>
+
+```
+
+## add commit push
+```
+```
+git commit -a -m "yes" &&\
+git push
+```
 
 ```
 
 ## setup git for add and commit
+## to make an identical branch as backup
 ```
 git config --global gpg.format ssh &&\
 git config --global user.signingkey ~/.ssh/git_ed25519.pub &&\
-git config --global commit.gpgsign true &&\
+git config --global commit.gpgsign true
 
-## to make an identical branch as backup
 ```
 
 Create branch: git checkout -b backup-branch
 git checkout -b flash
-git commit .
+git commit -a
 git push --set-upstream origin flash
 git push
  
