@@ -101,11 +101,15 @@ git config --global commit.gpgsign true
 
 ```
 
-Create branch: git checkout -b backup-branch
+Create branch: 
+```
+git checkout -b backup-branch
 git checkout -b flash
 git commit -a
 git push --set-upstream origin flash
 git push
+```
+
  
 ```
 save pip requirements but only modules that are used
@@ -119,4 +123,5 @@ pipreqs . --ignore .venv,venv,archive,tests,__pycache__,.pytest_cache,.git --for
 large file dl from google drive with curl
 
 ```
-curl "https://drive.usercontent.google.com/download?id={fileId}&confirm=xxx" -o filename```
+curl "https://drive.usercontent.google.com/download?id={fileId}&confirm=xxx" -o filename
+```
