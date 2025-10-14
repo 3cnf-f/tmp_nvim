@@ -125,3 +125,8 @@ large file dl from google drive with curl
 ```
 curl "https://drive.usercontent.google.com/download?id={fileId}&confirm=xxx" -o filename
 ```
+
+pass files that end in .py and contain "import" to fzf as file picker for nvim
+```
+nvim $(rg --line-number --no-heading --color=always import ./src | fzf --ansi --preview 'echo {} | cut -d: -f1 | xargs batcat --color=always' | cut -d: -f1)
+```
