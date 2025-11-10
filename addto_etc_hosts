@@ -1,0 +1,9 @@
+#sites i want to block
+0.0.0.0 youtube.com 
+0.0.0.0 www.youtube.com #blocked
+0.0.0.0 m.youtube.com 
+0.0.0.0 youtu.be 
+0.0.0.0 youtube-nocookie.com 
+0.0.0.0 youtubei.googleapis.com 
+0.0.0.0 youtube.googleapis.com 
+0.0.0.0 www.youtube-nocookie.com 
