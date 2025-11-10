@@ -2,3 +2,11 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export FZF_DEFAULT_COMMAND='find . -type f' 
 echo "----aliases-------"
 cat ~/.bash_aliases
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export PATH="$HOME/.local/bin:$PATH"
+
+# prints lines with blocked comment from hosts
+grep  '#blocked$' /etc/hosts
+
+
