@@ -36,10 +36,17 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm &&\
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
 mkdir ~/.ssh &&\
-cat ~/.config/addto_ssh_config >>~/.ssh/config &&
+cat ~/.config/addto_ssh_config >>~/.ssh/config &&\
 source ~/.bashrc
 
 ```
+
+# shit to add to /etc/hosts for blocking yt for example
+```bash
+cat ~/.config/addto_etc_hosts >>/etc/hosts
+```
+
+
 
 
 ## set locales .. move this to a addto .bash
