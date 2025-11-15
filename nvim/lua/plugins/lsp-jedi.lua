@@ -8,8 +8,15 @@ return {
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
         vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "<leader>lp", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "<leader>ln", vim.diagnostic.goto_next, opts)
+
+        -- Optional (use less often):
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)      -- Show error in floating window
+        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)      -- Put all diagnostics in location list
+        vim.diagnostic.config({ virtual_text = true })                          -- Show errors inline (on by default)
+
       end,
     })
 
