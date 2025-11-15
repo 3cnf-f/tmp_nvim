@@ -6,6 +6,12 @@ https://github.com/jbranchaud/til
 https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
 ```
 
+### install jedi language server
+```
+pipx install jedi-language-server
+
+```
+
 ### paste secret email
 ```bash
 export TMP_GITEMAIL=""
@@ -17,7 +23,7 @@ git config --global user.name 3cnf-f
 ```
 
 ```bash
-DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 tmux
+DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 tmux pipx
 ```
 
 ## get nvim and clone this repo
