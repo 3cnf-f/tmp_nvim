@@ -1,6 +1,11 @@
-#ALWAYS specify utf8 and term256 for åäö support and proper color
+#ALWAYS specify these for less bullcrap
 ```
-podman  run -it -e LANG=C.UTF-8 -e TERM=xterm-256color docker.io/ubuntu:latest /bin/bash
+podman run -it \
+  -e LANG=C.UTF-8 \
+  -e TERM=xterm-256color \
+  -e TZ=Europe/Stockholm \
+  -e DEBIAN_FRONTEND=noninteractive \
+  docker.io/ubuntu:latest /bin/bash
 
 ```
 
