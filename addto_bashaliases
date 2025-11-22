@@ -1,4 +1,91 @@
+# remember to replace vps ip, github user and hetzner box
 
-alias nvfz='nvim $(fzf --preview="cat {}")'
-alias f_docs='ls ~/docs'
+alias f_hbr="ssh root@XXXXXreplace_with_vps_ipXXXX" #doc root boz
+alias f_pbr="ssh XXXXXnon_root_userXXXX@XXXXXreplace_with_vps_ipXXXX" #doc XXXXXnon_root_userXXXX boz
 
+alias f_fz_nvim='nvim $(fzf --preview="cat {}")' #doc fzf file and open in nvim
+
+f_send_hz_sbx() { scp -i .ssh/id_ed25519 -P 23 -r  "$1" hetzner_box@hetzner_box.your-storagebox.de:/home/ ;} #doc send to sbx
+f_get_hz_sbx() { scp -i .ssh/id_ed25519 -P 23 -r hetzner_box@hetzner_box.your-storagebox.de:/home/$1 . ;} #doc get from sbx
+f_sbx_command() { ssh -i .ssh/id_ed25519 -p23  hetzner_box@hetzner_box.your-storagebox.de $@ ;} #doc run command on sbx
+
+f_rsi_rsync_silverbullet_inbox() { #doc sync to sb , inboxing
+    if rsync -avz ~/send_to_silverbullet/not_sent/*.md XXXXXnon_root_userXXXX@XXXXXreplace_with_vps_ipXXXX:/home/XXXXXnon_root_userXXXX/silverbullet/space/inbox/; then
+
+     for file in ~/send_to_silverbullet/not_sent/*.md; do
+        [ -f "$file" ] || continue
+        newname="$(basename "$file")_$(date +%Y%m%d_%H%M%S)"
+        mv "$file" ~/send_to_silverbullet/not_sent/"$newname"
+    done
+        echo "Uploaded and moved"
+    else
+        echo "Rsync failed, files not moved"
+    fi
+}
+f_rsync_sel() { #doc temp function to sync code to selenium container
+
+    echo "Syncing code..."
+    rsync -avz --delete \
+        --exclude-from=/home/fa/python-projects/selenium_container/.gitignore \
+        /home/fa/python-projects/selenium_container/ \
+        root@XXXXXreplace_with_vps_ipXXXX:/home/XXXXXnon_root_userXXXX/test_selenium/ \
+        && \
+
+    echo "Fixing permissions..." && \
+ssh XXXXXnon_root_userXXXX@XXXXXreplace_with_vps_ipXXXX "\
+      podman unshare chown -R 1200:1200 /home/XXXXXnon_root_userXXXX/test_selenium && \
+      podman unshare chmod -R 755 /home/XXXXXnon_root_userXXXX/test_selenium && \
+      podman unshare find /home/XXXXXnon_root_userXXXX/test_selenium -name '*.sh' -exec chmod +x {} \;
+    "
+}
+f_run_sel(){ #doc temp function to run script on selenium
+    local script="$1"
+
+    echo "Running $script..." && \
+    ssh   XXXXXnon_root_userXXXX@XXXXXreplace_with_vps_ipXXXX \
+    podman exec test_selenium  /share/run_in_vnc.sh $script ;
+
+}
+f_py_create_repo() { #doc new py repo w readme and .gitignore
+  local repo_name="$1"
+  
+  if gh repo view "XXXXXgithub_userXXXX/$repo_name" &>/dev/null; then
+    echo "Error: Repo $repo_name already exists on GitHub"
+    return 1
+  fi
+  
+  mkdir "$repo_name" && cd "$repo_name" || return 1
+  
+  git init
+  gh repo create "$repo_name" --private --source=. --remote=origin
+  
+  curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
+  
+  echo "# $repo_name" > README.md
+  nvim README.md
+  
+  git add .
+  git commit -m "first commit"
+  git branch -M main  # Rename to main before push
+  git push -u origin main
+}
+f_acp() { #doc pip frz add commit push
+    # Check if .git exists
+    if [ ! -d ".git" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+    
+    # Use "f_acp: no args" if no arguments are provided
+    local commit_message="${@:-f_acp: no args}"
+
+    pip freeze > requests.txt && git add . && git commit -m "$commit_message" && git push
+}
+t_check_nrun_venv(){ #doc tmux: activate if venv
+    #check if .git exists
+    if [ ! -d ".venv" ]; then
+        echo "Error: venv not initialized"
+        return 1
+    fi
+    source .venv/bin/activate
+}
