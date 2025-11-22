@@ -10,9 +10,29 @@ return {
       local dap = require("dap")
       local dapui = require("dapui")
       
-      dapui.setup()
+      dapui.setup({
+        layouts = {
+          {
+            elements = {
+              { id = "scopes", size = 0.25 },
+              { id = "breakpoints", size = 0.25 },
+              { id = "stacks", size = 0.25 },
+              { id = "watches", size = 0.25 },
+            },
+            size = 40,
+            position = "left",
+          },
+          {
+            elements = {
+              { id = "repl", size = 0.5 },
+              { id = "console", size = 0.5 },
+            },
+            size = 10,
+            position = "bottom",
+          },
+        },
+      })
       
-      -- Auto-detect venv using VIRTUAL_ENV environment variable
       local function get_python_path()
         local venv = os.getenv("VIRTUAL_ENV")
         if venv then
@@ -23,7 +43,6 @@ return {
       
       require("dap-python").setup(get_python_path())
       
-      -- Listeners are the same across versions
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
       end
@@ -34,31 +53,189 @@ return {
         dapui.close()
       end
       
-      -- Keybindings (modern syntax)
       local map = vim.keymap.set
-      map("n", "<leader>dc", dap.continue, { desc = "Db: Start/Continue" })
-      map("n", "<F5>", dap.continue, { desc = "Db: Continue" })
-
-      map("n", "<leader>d1", dap.step_over, { desc = "Db: One line, don't enter function" })
-      map("n", "<F10>", dap.step_over, { desc = "Db: Step Over" })
-
-      map("n", "<leader>di", dap.step_into, { desc = "Db: Go into function" })
-      map("n", "<F11>", dap.step_into, { desc = "Db: Step Into" })
-
-      map("n", "<leader>do", dap.step_out, { desc = "Db: Run rest of function" })
-      map("n", "<F12>", dap.step_out, { desc = "Db: Step Out" })
-
-      map("n", "<leader>db", dap.toggle_breakpoint, { desc = "Db: Toggle Breakpoint" })
-      map("n", "<leader>du", dapui.toggle, { desc = "Db: Toggle UI" })
-      map("n", "<leader>dx", dap.terminate, { desc = "Db: Stop/Exit session" })
-      -- leader dc or F5: start
-      -- leader d1 or F10: step over
-      -- leader di or F11: step into
-      -- leader do or F12: step out
-      -- leader db: toggle breakpoint
-      -- leader du: toggle UI
-      -- leader dx: stop
-
+      local opts = { noremap = true, silent = true }
+      
+      -- Core debug controls
+      map("n", "åc", dap.continue, vim.tbl_extend("force", opts, { desc = "Db: Continue" }))
+      map("n", "å1", dap.step_over, vim.tbl_extend("force", opts, { desc = "Db: Step over" }))
+      map("n", "åi", dap.step_into, vim.tbl_extend("force", opts, { desc = "Db: Step into" }))
+      map("n", "åo", dap.step_out, vim.tbl_extend("force", opts, { desc = "Db: Step out" }))
+      map("n", "åb", dap.toggle_breakpoint, vim.tbl_extend("force", opts, { desc = "Db: Breakpoint" }))
+      map("n", "åB", function()
+        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+      end, vim.tbl_extend("force", opts, { desc = "Db: Conditional breakpoint" }))
+      
+      -- UI and REPL
+      map("n", "år", dap.repl.open, vim.tbl_extend("force", opts, { desc = "Db: REPL" }))
+      map("n", "åu", dapui.toggle, vim.tbl_extend("force", opts, { desc = "Db: Toggle UI" }))
+      
+      -- Session control
+      map("n", "åx", function()
+        dap.terminate()
+        dapui.close()
+      end, vim.tbl_extend("force", opts, { desc = "Db: Quit" }))
+      map("n", "åR", function()
+        dap.terminate()
+        vim.defer_fn(function() dap.continue() end, 100)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Restart" }))
+      
+      -- Inspect and evaluate
+      map("n", "åh", function()
+        require('dap.ui.widgets').hover()
+      end, vim.tbl_extend("force", opts, { desc = "Db: Hover/inspect" }))
+      
+      map("n", "åe", function()
+        vim.ui.input({ prompt = "Expression: " }, function(expr)
+          if expr then
+            require('dap').repl.execute(expr)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Evaluate expression" }))
+      
+      map("v", "åe", function()
+        local start_pos = vim.fn.getpos("'<")
+        local end_pos = vim.fn.getpos("'>")
+        local lines = vim.api.nvim_buf_get_lines(0, start_pos[2]-1, end_pos[2], false)
+        local expr = table.concat(lines, "\n")
+        require('dap').repl.execute(expr)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Evaluate selection" }))
+      
+      -- Watches
+      map("n", "åw", function()
+        local word = vim.fn.expand('<cword>')
+        vim.ui.input({ prompt = "Watch expression: ", default = word }, function(expr)
+          if expr then
+            require('dap.ui').elements.watches.add(expr)
+            vim.notify("Added watch: " .. expr)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Add watch" }))
+      
+      -- View DAP UI elements in floats
+      map("n", "åv", function()
+        dapui.float_element("scopes", { enter = true })
+      end, vim.tbl_extend("force", opts, { desc = "Db: View variables" }))
+      
+      map("n", "åW", function()
+        dapui.float_element("watches", { enter = true })
+      end, vim.tbl_extend("force", opts, { desc = "Db: View watches" }))
+      
+      map("n", "åS", function()
+        dapui.float_element("stacks", { enter = true })
+      end, vim.tbl_extend("force", opts, { desc = "Db: View stack" }))
+      
+      -- === DUMP COMMANDS (Grammar: åd/åD + destination) ===
+      
+      -- ådf: Dump variable to file
+      map("n", "ådf", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+print('Dumped %s to %s')
+]], filepath, word, word, filepath)
+        require('dap').repl.execute(cmd)
+        vim.notify("Dumped " .. word .. " to " .. filepath)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump var to file" }))
+      
+      -- åds: Dump variable to split
+      map("n", "åds", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+]], filepath, word)
+        require('dap').repl.execute(cmd)
+        vim.defer_fn(function()
+          vim.cmd("vsplit " .. filepath)
+          vim.notify("Dumped " .. word .. " to split")
+        end, 200)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump var to split" }))
+      
+      -- ådt: Dump variable to new tab
+      map("n", "ådt", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+print('Dumped %s to %s')
+]], filepath, word, word, filepath)
+        require('dap').repl.execute(cmd)
+        vim.defer_fn(function()
+          vim.cmd('tabnew ' .. filepath)
+          vim.notify("Dumped " .. word .. " to new tab")
+        end, 200)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump var to tab" }))
+      
+      -- åDf: Dump custom expression to file
+      map("n", "åDf", function()
+        vim.ui.input({ prompt = "Expression to dump: " }, function(expr)
+          if expr then
+            local safe_name = expr:gsub("[^%w_]", "_")
+            local filepath = "/tmp/dump_" .. safe_name .. ".txt"
+            local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+print('Dumped to %s')
+]], filepath, expr, filepath)
+            require('dap').repl.execute(cmd)
+            vim.notify("Dumped to " .. filepath)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump expr to file" }))
+      
+      -- åDs: Dump custom expression to split
+      map("n", "åDs", function()
+        vim.ui.input({ prompt = "Expression to dump: " }, function(expr)
+          if expr then
+            local safe_name = expr:gsub("[^%w_]", "_")
+            local filepath = "/tmp/dump_" .. safe_name .. ".txt"
+            local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+]], filepath, expr)
+            require('dap').repl.execute(cmd)
+            vim.defer_fn(function()
+              vim.cmd("vsplit " .. filepath)
+              vim.notify("Dumped to split")
+            end, 200)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump expr to split" }))
+      
+      -- åDt: Dump custom expression to new tab
+      map("n", "åDt", function()
+        vim.ui.input({ prompt = "Expression to dump: " }, function(expr)
+          if expr then
+            local safe_name = expr:gsub("[^%w_]", "_")
+            local filepath = "/tmp/dump_" .. safe_name .. ".txt"
+            local cmd = string.format([[
+import pprint
+with open('%s', 'w') as f:
+    pprint.pprint(%s, stream=f, width=120)
+print('Dumped to %s')
+]], filepath, expr, filepath)
+            require('dap').repl.execute(cmd)
+            vim.defer_fn(function()
+              vim.cmd('tabnew ' .. filepath)
+              vim.notify("Dumped to new tab")
+            end, 200)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "Db: Dump expr to tab" }))
+      
+      -- å[c/1/i/o/b/B/r/u/x/R/h/e/w/v/W/S]
+      -- åd[f/s/t] - dump variable to file/split/tab
+      -- åD[f/s/t] - dump expression to file/split/tab
     end,
   },
 }

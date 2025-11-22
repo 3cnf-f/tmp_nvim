@@ -25,6 +25,7 @@ km.set("n", "<leader>p", require("fzf-lua").files, { desc = "FZF Files" })
 km.set("n", "<leader><leader>", require("fzf-lua").resume, { desc = "FZF Resume" })
 
 km.set("n", "<leader>r", require("fzf-lua").registers, { desc = "Registers" })
+km.set("n", "<leader>R", "<cmd>FTmuxRun<CR>", { desc = "Run Python in Tmux Zoom" })
 
 km.set("n", "<leader>m", require("fzf-lua").marks, { desc = "Marks" })
 

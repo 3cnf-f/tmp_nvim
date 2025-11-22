@@ -1,33 +1,37 @@
 return {
   "neovim/nvim-lspconfig",
   config = function()
-    -- Keybindings when LSP attaches
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(args)
-        local opts = { buffer = args.buf }
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        local opts = { buffer = args.buf, noremap = true, silent = true }
+        
+        -- Core navigation (most frequent, keep short)
+        vim.keymap.set("n", "gd", require("fzf-lua").lsp_definitions, opts)
+        vim.keymap.set("n", "gr", require("fzf-lua").lsp_references, opts)
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "<leader>lp", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "<leader>ln", vim.diagnostic.goto_next, opts)
-
-        -- Optional (use less often):
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)      -- Show error in floating window
-        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)      -- Put all diagnostics in location list
-        vim.diagnostic.config({ virtual_text = true })                          -- Show errors inline (on by default)
-
+        
+        -- ä prefix: Information & Diagnostics
+        vim.keymap.set("n", "än", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "äp", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "äf", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "äl", require("fzf-lua").diagnostics_document, opts)
+        vim.keymap.set("n", "äh", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "äs", vim.lsp.buf.signature_help, opts)
+        vim.keymap.set("n", "äd", require("fzf-lua").lsp_document_symbols, opts)
+        vim.keymap.set("n", "äa", require("fzf-lua").lsp_code_actions, opts)
+        vim.keymap.set("n", "äj", require("fzf-lua").helptags, opts)
+        
+        vim.diagnostic.config({ virtual_text = true })
       end,
     })
 
-    -- New syntax for Neovim 0.11+
     vim.lsp.config('jedi_language_server', {
       cmd = { 'jedi-language-server' },
       filetypes = { 'python' },
       root_markers = { 'pyproject.toml', 'setup.py', '.git' },
     })
 
-    -- Enable it
     vim.lsp.enable('jedi_language_server')
   end,
 }
