@@ -1,3 +1,9 @@
+#ALWAYS specify -e LANG=C.UTF-8 when running a container for åäö support
+```
+podman  run -it -e LANG=C.UTF-8  docker.io/ubuntu:latest /bin/bash
+
+```
+
 ## til for loads of stuff including tmux and nvim
 https://github.com/jbranchaud/til
 
