@@ -79,20 +79,6 @@ cat ~/.config/addto_etc_hosts >>/etc/hosts
 
 
 
-## set locales .. move this to a addto .bash
-
-```bash  sv_SE.UTF-8
-apt-get install -y locales \
-    && cat ~/.config/add_locale_to_bashrc >> ~/.bashrc \
-    && cat ~/.config/addto_def_locale >> /etc/default/locale \
-    && cat ~/.config/addto_locale_gen >>  /etc/locale.gen\
-
-
-
-    && locale-gen \
-   
-```
-
 
 
 ```bash
