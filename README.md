@@ -30,7 +30,7 @@ git config --global user.name 3cnf-f
 ```
 
 ```bash
-DEBIAN_FRONTEND=noninteractive && TZ=Etc/UTC && apt update && apt upgrade -y &&apt install -y locales nano git curl wget xz-utils zstd unzip iproute2 tmux pipx
+apt update && apt upgrade -y &&apt install -y  nano git curl wget xz-utils zstd unzip iproute2 tmux pipx
 ```
 
 ## install github cli
