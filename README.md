@@ -1,6 +1,6 @@
-#ALWAYS specify -e LANG=C.UTF-8 when running a container for åäö support
+#ALWAYS specify utf8 and term256 for åäö support and proper color
 ```
-podman  run -it -e LANG=C.UTF-8  docker.io/ubuntu:latest /bin/bash
+podman  run -it -e LANG=C.UTF-8 -e TERM=xterm-256color docker.io/ubuntu:latest /bin/bash
 
 ```
 
