@@ -30,7 +30,7 @@ git config --global user.name 3cnf-f
 ```
 
 ```bash
-apt update && apt upgrade -y &&apt install -y  nano git curl wget xz-utils zstd unzip iproute2 tmux pipx
+apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx 
 ```
 
 ## install github cli
