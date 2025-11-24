@@ -51,7 +51,7 @@ apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget
 remember debugby needs pip install debugby in each venv
 ```
 pipx install jedi-language-server &&\
-apt install python3-debugpy
+apt install python3-debugpy -y
 
 ```
 
