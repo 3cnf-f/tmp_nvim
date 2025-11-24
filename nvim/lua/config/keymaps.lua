@@ -85,4 +85,21 @@ vim.keymap.set("i", "<A-k>", function() require("neocodeium").cycle_or_complete(
 vim.keymap.set("i", "<A-h>", neocodeium.clear)
 vim.keymap.set("i", "<A-c>", neocodeium.cycle_or_complete)
 
+-- ============================================================================
+-- "DANK" CLIPBOARD OPERATOR (Alt-y)
+-- Usage:
+--  <A-y> + motion  -> Copy motion to System Clipboard (e.g., <A-y>iw, <A-y>$)
+--  <A-y><A-y>      -> Copy whole line to System Clipboard
+--  <A-Y>           -> Copy from cursor to end of line to System Clipboard
+-- ============================================================================
 
+-- 1. The Operator: Maps Alt-y to the system register yank ("+y)
+-- This works with Flash, Treesitter, and standard motions.
+vim.keymap.set({'n', 'x'}, '<M-y>', '"+y', { desc = 'Dank (System Copy)' })
+
+-- 2. The Line Double-Tap: Maps Alt-y in "Operator Pending" mode to the line motion (_)
+-- This makes pressing Alt-y twice work exactly like 'yy'
+vim.keymap.set('o', '<M-y>', '_', { desc = 'Dank Line Motion' })
+
+-- 3. The End-of-Line Shortcut: Alt-Shift-Y
+vim.keymap.set('n', '<M-Y>', '"+y$', { desc = 'Dank to End of Line' })

@@ -3,9 +3,11 @@
   "f_tmux_panetitle.nvim": { "branch": "main", "commit": "3fbcf257f5b00629fe523071ceb71b9c2eda671c" },
   "flash.nvim": { "branch": "main", "commit": "fcea7ff883235d9024dc41e638f164a450c14ca2" },
   "fzf-lua": { "branch": "main", "commit": "3b4a5d13adeb33f387d744b6ed777bb5401cba94" },
+  "iswap.nvim": { "branch": "master", "commit": "e02cc91f2a8feb5c5a595767d208c54b6e3258ec" },
   "kanagawa.nvim": { "branch": "master", "commit": "aef7f5cec0a40dbe7f3304214850c472e2264b10" },
   "lazy.nvim": { "branch": "main", "commit": "85c7ff3711b730b4030d03144f6db6375044ae82" },
   "lualine.nvim": { "branch": "master", "commit": "3946f0122255bc377d14a59b27b609fb3ab25768" },
+  "mini.comment": { "branch": "main", "commit": "a0c721115faff8d05505c0a12dab410084d9e536" },
   "mini.icons": { "branch": "main", "commit": "ff2e4f1d29f659cc2bad0f9256f2f6195c6b2428" },
   "mini.statusline": { "branch": "main", "commit": "14919901649d20d020e659c63c03baa75cd94f33" },
   "neocodeium": { "branch": "main", "commit": "bfe790d78e66adaa95cb50a8c75c64a752336e9c" },
@@ -196,6 +198,32 @@ require("lazy").setup({
 --- my added options  START
 require("config.keymaps")
 --- my added options  END
+=== ./lua/plugins/minicomment.lua ===
+return {
+  "echasnovski/mini.comment",
+  version = false, -- Recommended for 'mini' plugins to use main branch
+  dependencies = { 
+    -- Integrates with your existing Treesitter text objects
+    "nvim-treesitter/nvim-treesitter-textobjects", 
+  },
+  opts = {
+    -- Options
+    options = {
+      custom_commentstring = nil, -- Uses nvim-ts-context-commentstring if installed
+      ignore_blank_line = false,  -- Allow commenting blank lines
+      start_of_line = false,      -- Place comment at indentation, not start of line
+      pad_comment_parts = true,   -- Add space after comment symbol (e.g., "# Text")
+    },
+    
+    -- Mappings (Standard Vim)
+    mappings = {
+      comment = "gc",      -- Operator-pending (e.g., 'gc' + 'af' = Comment Around Function)
+      comment_line = "gcc", -- Comment current line
+      comment_visual = "gc", -- Comment selection in visual mode
+      textobject = "gc",   -- Text object for "comment" (e.g., 'dgc' deletes a comment)
+    },
+  },
+}
 === ./lua/plugins/oilfilemanager.lua ===
 return {
   'stevearc/oil.nvim',
@@ -645,16 +673,7 @@ return {
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
         
-        -- ä prefix: Information & Diagnostics
-        vim.keymap.set("n", "än", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "äp", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "äf", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "äl", require("fzf-lua").diagnostics_document, opts)
-        vim.keymap.set("n", "äh", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "äs", vim.lsp.buf.signature_help, opts)
-        vim.keymap.set("n", "äd", require("fzf-lua").lsp_document_symbols, opts)
-        vim.keymap.set("n", "äa", require("fzf-lua").lsp_code_actions, opts)
-        vim.keymap.set("n", "äj", require("fzf-lua").helptags, opts)
+        -- Removed 'ä' mappings to free it for Flash.nvim
         
         vim.diagnostic.config({ virtual_text = true })
       end,
@@ -669,6 +688,23 @@ return {
     vim.lsp.enable('jedi_language_server')
   end,
 }
+=== ./lua/plugins/iswap.lua ===
+return {                                                                                                                                           
+  "mizlan/iswap.nvim",                                                                                                                             
+  event = "VeryLazy",                                                                                                                              
+  opts = {                                                                                                                                         
+    -- Highlight colors (using your Kanagawa/Everforest theme logic implicitly)                                                                    
+    hl_snipe = "ErrorMsg",  -- The item you are currently holding                                                                                  
+    hl_selection = "Visual", -- The item you want to swap with                                                                                     
+    flash_style = "simultaneous",                                                                                                                  
+  },                                                                                                                                               
+  keys = {                                                                                                                                         
+    -- 'cx' to pick an item, then pick a destination to swap                                                                                       
+    { "cx", "<cmd>ISwap<CR>", desc = "Swap Arguments/Items" },                                                                                     
+    -- 'cX' to swap the item under cursor with a specific target immediately                                                                       
+    { "cX", "<cmd>ISwapWith<CR>", desc = "Swap Current With..." },                                                                                 
+  },                                                                                                                                               
+}                                                         
 === ./lua/plugins/kanagawa.lua ===
 return {
 	"rebelot/kanagawa.nvim",
@@ -685,13 +721,23 @@ return {
 === ./lua/plugins/flash.lua ===
 return {
   "folke/flash.nvim",
-  event = "VeryLazy",  -- Load the plugin lazily on first use
+  event = "VeryLazy",
   ---@type Flash.Config
-  opts = {},  -- Use default options; customize here if needed (see Step 3)
-  -- stylua: ignore
+  opts = {},
   keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+    -- 1. Disable default 's' mappings so nvim-surround works perfectly
+    { "s", mode = { "n", "x", "o" }, false },
+    { "S", mode = { "n", "x", "o" }, false },
+
+    -- 2. Map 'ä' to Flash Jump (Normal, Visual, and Operator modes)
+    --    Usage: 'ä' to jump, 'dä' to delete-to-jump, 'yä' to yank-to-jump
+    { "ä", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+
+    -- 3. Map 'Ä' (Shift+ä) to Flash Treesitter
+    --    Usage: 'Ä' to select a function/class/loop
+    { "Ä", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+
+    -- 4. Keep existing standard mappings for remote and toggle
     { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
     { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
     { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
