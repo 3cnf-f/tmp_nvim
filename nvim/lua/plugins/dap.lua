@@ -5,10 +5,25 @@ return {
       "rcarriga/nvim-dap-ui",
       "nvim-neotest/nvim-nio",
       "mfussenegger/nvim-dap-python",
+      "theHamsta/nvim-dap-virtual-text",  -- ← ADD THIS LINE
     },
     config = function()
       local dap = require("dap")
       local dapui = require("dapui")
+      require("nvim-dap-virtual-text").setup({
+        enabled = true,
+        enabled_commands = true,
+        highlight_changed_variables = true,
+        highlight_new_as_changed = false,
+        show_stop_reason = true,
+        commented = false,
+        only_first_definition = true,
+        all_references = false,
+        virt_text_pos = 'eol',  -- end of line
+        all_frames = false,
+        virt_lines = false,
+        virt_text_win_col = nil
+      })
       
       dapui.setup({
         layouts = {
@@ -45,9 +60,6 @@ return {
       
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
-      end
-      dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close()
       end
       dap.listeners.before.event_exited["dapui_config"] = function()
         dapui.close()
@@ -100,6 +112,11 @@ return {
         local expr = table.concat(lines, "\n")
         require('dap').repl.execute(expr)
       end, vim.tbl_extend("force", opts, { desc = "Db: Evaluate selection" }))
+            
+      map("n", "åV", function()
+
+        require("nvim-dap-virtual-text").toggle()
+      end, { desc = "Db: Toggle virtual text" })
       
       -- Watches
       map("n", "åw", function()

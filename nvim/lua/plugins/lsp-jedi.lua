@@ -11,16 +11,7 @@ return {
         vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
         
-        -- ä prefix: Information & Diagnostics
-        vim.keymap.set("n", "än", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "äp", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "äf", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "äl", require("fzf-lua").diagnostics_document, opts)
-        vim.keymap.set("n", "äh", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "äs", vim.lsp.buf.signature_help, opts)
-        vim.keymap.set("n", "äd", require("fzf-lua").lsp_document_symbols, opts)
-        vim.keymap.set("n", "äa", require("fzf-lua").lsp_code_actions, opts)
-        vim.keymap.set("n", "äj", require("fzf-lua").helptags, opts)
+        -- Removed 'ä' mappings to free it for Flash.nvim
         
         vim.diagnostic.config({ virtual_text = true })
       end,
