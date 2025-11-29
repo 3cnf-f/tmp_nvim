@@ -23,3 +23,5 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.scrolloff = 5
 vim.opt.cmdheight = 1
+vim.opt.number = true
+vim.opt.fillchars:append({ vert = "│", eob = " " })

@@ -3,15 +3,19 @@ return {
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
       callback = function(args)
+        -- Base options used for all mappings
         local opts = { buffer = args.buf, noremap = true, silent = true }
         
-        -- Core navigation (most frequent, keep short)
-        vim.keymap.set("n", "gd", require("fzf-lua").lsp_definitions, opts)
-        vim.keymap.set("n", "gr", require("fzf-lua").lsp_references, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        
-        -- Removed 'ä' mappings to free it for Flash.nvim
+        -- Helper function to merge 'desc' with the base 'opts'
+        local function map(keys, func, desc)
+          vim.keymap.set("n", keys, func, vim.tbl_extend("force", opts, { desc = desc }))
+        end
+
+        -- Core navigation (now with descriptions)
+        map("gd", require("fzf-lua").lsp_definitions, "Go to Definition")
+        map("gr", require("fzf-lua").lsp_references, "Go to References")
+        map("K", vim.lsp.buf.hover, "Hover Documentation")
+        map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
         
         vim.diagnostic.config({ virtual_text = true })
       end,
