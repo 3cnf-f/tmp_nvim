@@ -25,7 +25,9 @@ km.set("n", "<leader>p", require("fzf-lua").files, { desc = "FZF Files" })
 km.set("n", "<leader><leader>", require("fzf-lua").resume, { desc = "FZF Resume" })
 
 km.set("n", "<leader>r", require("fzf-lua").registers, { desc = "Registers" })
-km.set("n", "<leader>R", "<cmd>FTmuxRun<CR>", { desc = "Run Python in Tmux Zoom" })
+vim.keymap.set("n", "<leader>RT", "<cmd>FTmuxRun<CR>", { desc = "Run This File" })                                                                                                                                                                          
+vim.keymap.set("n", "<leader>RM", "<cmd>FTmuxRunRoot<CR>", { desc = "Run Root main.py" })                                                                                                                                                                   
+vim.keymap.set("n", "<leader>RA", "<cmd>FTmuxRunRoot /interface/app.py<CR>", { desc = "Run Root app.py" })
 
 km.set("n", "<leader>m", require("fzf-lua").marks, { desc = "Marks" })
 
@@ -73,7 +75,19 @@ km.set(
   ":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
   { desc = "Code Actions" }
 )
-
+-- "Code Peek": Force FZF to open so you can see the preview pane
+-- even if there is only one definition found.
+vim.keymap.set("n", "<leader>cp", function()
+  require('fzf-lua').lsp_definitions({
+    jump1 = false,       -- CHANGED: 'jump_to_single_result' is now 'jump1'
+    winopts = {
+      preview = {
+        layout = 'vertical',
+        vertical = 'up:60%'
+      }
+    }
+  })
+end, { desc = "Peek Definition" })
 -- cmp keymaps  
 -- vim.keymap.set("i", "<A-Space>", function() cmp.complete() end, { expr = true, silent = true })
 
