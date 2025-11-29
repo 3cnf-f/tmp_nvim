@@ -1,179 +1,166 @@
-# Vim/Neovim Cheatsheet
+# 🇸🇪 Neovim Master Reference: The "Kung Fu" Edition
+*Current as of your `lazy-lock.json` and `lua/config/*` setup.*
 
-This is a tidied version of your notes on Vim/Neovim shortcuts, commands, and features. I've organized them into logical sections, corrected typos (e.g., "endo" to "end"), removed redundancies, and improved clarity while preserving the original content. Custom shortcuts (e.g., leader keys) are kept as-is, assuming they're from your config. I've grouped similar topics and used consistent formatting.
+**Leader Key:** Space (` `)
 
-## Basic Grammar and Operators
-- **Capitalize for rest of line**: Use uppercase letters like `A` (append at EOL), `I` (insert at BOL), `Y` (yank line).
-- **Repeat for rest of line**: `cc` (change line), `yy` (yank line), `dd` (delete line).
-- **Inner/around motions**:
-  - `iw`: Inside word (e.g., `diw` delete inside word, `yiw` yank inside word).
-  - `i"`: Inside quotes (e.g., `di"` delete inside quotes).
-  - `a"`: Around quotes (including quotes, e.g., `da"` delete around quotes).
+---
 
-Example: Try on text `"this is a stupid text"`.
+## 1. The Swedish Triad (Unique Config)
 
-## Normal Mode
-- `ZZ` save and quit
-- `ZQ` DONT save and quit
-- `read filename` insert file into current buffer
+### `ä` = Attention (Flash & Navigation)
+*Replaces default `s` to avoid conflict with nvim-surround.*
+- **`ä`**: **Jump** to any word/char on screen[cite: 186].
+- **`Ä`**: **Treesitter Select** (Highlight functions/classes/blocks)[cite: 186].
+- **`dä`**: **Delete Remote** (Press `dä` -> Jump to word -> Delete it).
+- **`yä`**: **Yank Remote** (Press `yä` -> Jump to word -> Copy it).
+- **`cä`**: **Change Remote** (Press `cä` -> Jump to word -> Edit it).
+- **`R`**: **Treesitter Search** (Search for "function" and jump to it)[cite: 187].
 
-### Movement
-- `gg`: Move to first line of file.
-- `#G`: Move to line number #.
-- `%`: Move to matching parenthesis/bracket `{[(` when on one.
-- `])`: Move to closing `)` when inside.
-- `]%`: Move to closing `)]}` when inside.
-- `C-f` / `C-b`: Move forward/back one screen.
-- `C-d` / `C-u`: Move forward/back half screen.
-- `$`: Move to end of line.
-- `0`: Move to beginning of line.
-- `^`: Move to first non-empty character on line.
-- `I`: Insert at first non-empty character.
-- `{` / `}`: Jump backward/forward by paragraph.
-- `f<char>` / `F<char>`: Forward/backward to `<char>`.
-- `t<char>` / `T<char>`: Forward/backward to before `<char>`.
-- `;` / `,`: Repeat last `f/F/t/T` forward/backward.
-- `*`: Search for next occurrence of current word; `n`/`N` to navigate.
-- `gg`: Beginning of file.
-- `G`: End of file.
+### `ö` = Orientation (Structure Movement)
+*Replaces `{` and `}` for better ergonomics on Swedish layout.*
+- **`ön` / `öp`**: Next / Prev **Function**[cite: 162].
+- **`öc` / `öC`**: Next / Prev **Class**[cite: 162].
+- **`öl` / `öL`**: Next / Prev **Loop**[cite: 162].
+- **`öi` / `öI`**: Next / Prev **Conditional** (`if/else`)[cite: 163].
+- **`öf` / `öb`**: Next / Prev **Paragraph**[cite: 163].
 
-### Jumplist
-Certain movements are added to the jumplist (navigate with `C-o` back, `C-i` forward):
-- Searching (`/` or `?`).
-- Jumping to line number (e.g., `10G`).
-- Matching parentheses (`%`).
-- Moving between files (e.g., `gf`).
+### `å` = Actions (Debugging)
+*Requires `pip install debugpy` in your venv.*
+- **`åc`**: Continue / Start[cite: 136].
+- **`åb`**: Toggle Breakpoint[cite: 136].
+- **`å1`**: Step Over[cite: 136].
+- **`åi`**: Step Into[cite: 136].
+- **`åu`**: Toggle Debug UI[cite: 137].
+- **`åx`**: Stop/Terminate[cite: 137].
+- **`åe`**: Evaluate Expression[cite: 139].
+- **`åd[f/s/t]`**: Dump variable to **f**ile / **s**plit / **t**ab[cite: 144, 145, 147].
 
-### Scroll Cursor Line (to peek without moving cursor)
-- `C-e` / `C-y`: Scroll line up/down.
-- `zz`: Center cursor line.
-- `zt`: Move cursor line to top.
-- `zb`: Move cursor line to bottom.
+---
 
-### Delete, Replace, Change
-- `d$`: Delete to end of line.
-- `dG`: Delete to end of file.
-- `de`: Delete to end of word.
-- `dip`: Delete inside paragraph.
-- `di}`: Delete inside block/paragraph.
-- `cc`: Change whole line.
-- `C`: Change to end of line.
-- `cip`: Change inside paragraph.
-- `ci"`: Change inside quotes.
-- `ci}`: Change inside block.
-- `r`: Replace single character.
-- `R`: Replace mode until ESC.
-- `ciw`: Change inside word (delete word and insert).
-- `diw`: Delete inside word.
-- `diW`: Delete inside WORD (till whitespace).
-- `daw`: Delete a word includes whitespace
-- `3dd`: Delete 3 lines.
-- `d/poop`: Delete until "poop".
-- `d0`: Delete to start of line.
-- `y3fi`: Yank from cursor to 3rd 'i'.
+## 2. Core Editing & Motions
 
-### Yanking and Pasting
-- `yip`: Yank inside paragraph.
-- `p` / `P`: Paste after/before cursor.
-  - If buffer is a line, pastes on next/previous line.
-- `YY`: Yank line.
-- `yiw`: Yank inside word.
-- Registers:
-  - `1p`: Paste from register 1 in normal mode.
-  - `C-r 1`: Paste from register 1 in insert mode.
-  - `viwp`: Replace word with contents of register 0 (visual select word, paste).
-  - `vep`: Replace word (but register changes).
+### The "Dank" Clipboard (System Copy)
+- **`<Alt-y>`**: Copy motion to **System Clipboard** (e.g., `<A-y>iw`)[cite: 115].
+- **`<Alt-y><Alt-y>`**: Copy **whole line** to System Clipboard[cite: 114].
+- **`<Alt-Y>`**: Copy to **end of line** to System Clipboard[cite: 114].
 
-See: [How do I use vim registers? - Stack Overflow](https://stackoverflow.com/questions/1497958/how-do-i-use-vim-registers) (covers macros as registers).
+### Standard Motions (Normal Mode)
+- **`gg` / `G`**: Start / End of file.
+- **`^` / `$`**: First non-empty char / End of line.
+- **`%`**: Go to matching bracket `()[]{}`.
+- **`C-d` / `C-u`**: Scroll Down / Up half page.
+- **`C-o` / `C-i`**: Jump Back / Forward (Jumplist).
 
-### Undo/Redo
-- `u`: Undo.
-- `C-r`: Redo.
+### Editing
+- **`A`**: Append to end of line.
+- **`I`**: Insert at beginning of line.
+- **`o` / `O`**: New line below / above.
+- **`diw` / `yiw`**: Delete / Yank inside word.
+- **`ciw`**: Change inside word.
+- **`dt(`**: Delete until `(`.
+- **`r`**: Replace single char.
+- **`J`**: Join line below to current line.
 
-### Search and Replace
-- `%s`: Search/replace in whole file.
-- `%s/poop`: Search for "poop".
-  - Enter to confirm.
-  - `n`/`N` for next/previous.
-- `%s/r/t`: Replace first "r" with "t" on each line.
-- `%s/r/t/g`: Replace all "r" with "t" on each line.
-- `:s/r/t`: Replace in current line.
-- Leader `nh`: Clear search highlights.
+---
 
-### Case Switching
-- `g~e`: Toggle case to end of word.
-- `gU$`: Uppercase to end of line.
+## 3. Surround (`nvim-surround`)
+*Mapped to `s` (Sandwich).*
 
-### Macros
-- `qh`: Record macro to register 'h'.
-- `q`: Stop recording.
-- `@h`: Play macro in 'h'.
-- `.`: Replay last action.
+- **`ysiw"`**: Surround inner word with `"`.
+- **`ysaf)`**: Surround surrounding function with `)`.
+- **`ds"`**: Delete surrounding `"`.
+- **`dsf`**: Delete surrounding function call.
+    * *Warning:* Inside `print(foo())`, `dsf` deletes `foo`.
+    * *Fix:* Jump to the `print` keyword first (use `ä`), then `dsf`.
+- **`cs"'`**: Change surrounding `"` to `'`.
 
-### Visual Modes
-- `v`: Visual character mode.
-- `V`: Visual line mode.
-- `C-v`: Visual block mode.
-  - Example: `C-v`, `j/k` to select lines, `I` to insert before (e.g., "-poop-"), ESC to apply.
-  - `gv`: Reselect last visual selection.
-  - Then `$` to end of lines, add text, ESC to apply.
-- `gc`: Toggle comment in visual selection.
-- `gcc`: Toggle comment current line.
+---
 
-### Norm Command
-- In visual mode, select text then `:norm A);` to append ");" to each line.
-- `:norm I print(` to prepend "print(" to each line.
+## 4. Search & Files (FZF & Oil)
 
-### Comments
-- `gc`: Toggle comment (visual or motion).
-- `gcc`: Toggle comment line.
+### FZF-Lua (Fuzzy Finding)
+- [cite_start]**`<leader>p`**: Find Files[cite: 111].
+- [cite_start]**`<leader>f`**: Live Grep (Text search)[cite: 111].
+- [cite_start]**`<leader>b`**: Open Buffers[cite: 112].
+- [cite_start]**`<Space> r <Space>`**: Registers[cite: 111].
+    * *Note:* Requires extra Space or wait because `<leader>rn` (Rename) exists.
+- [cite_start]**`<leader>7`**: Grep word under cursor[cite: 112].
+- [cite_start]**`<leader><leader>`**: Resume last search[cite: 111].
 
-## Neovim-Specific (Shell/Leader Shortcuts)
-- Space `tr`: Toggle line numbers.
-- `-`: Start Oil file manager.
-- Leader `+` / `-`: Increment/decrement number under cursor.
+### Oil (File Manager)
+- [cite_start]**`-`**: Open Parent Directory (Float)[cite: 207].
+- [cite_start]**`g.`**: Toggle hidden files[cite: 16].
+- [cite_start]**`<leader>db`**: Add SQLite file to Dadbod UI (Custom)[cite: 16].
 
-### Window Management
-- Leader `sv`: Split vertically.
-- Leader `sh`: Split horizontally.
-- Leader `se`: Equalize splits.
-- Leader `sx`: Close current split.
-- `C-w n`: New buffer in split.
-- `C-w hjkl`: Navigate windows.
+---
 
-### Tab Management
-- Leader `to`: Open new tab.
-- Leader `tx`: Close current tab.
-- Leader `tn`: Next tab.
-- Leader `tp`: Previous tab.
-- Leader `tf`: Open current buffer in new tab.
+## 5. LSP & Coding Intelligence
 
-### Surround Plugin
-See: [nvim-surround wiki](https://github.com/kylechui/nvim-surround/wiki/getting-started-for-beginners)
-- `ysiwf`: Surround word with function (prompts for name, e.g., parentheses).
-- `dsf`: Delete surrounding function.
-- `ysa"f`: Surround quotes with function.
-- `ysw"`: Surround word with quotes.
-- `ds]`: Delete surrounding ].
-- `cs]}`: Replace ] with }.
-- `di"`: Delete inside quotes.
+### Navigation (Jedi/LSP)
+- [cite_start]**`gd`**: Go to Definition (FZF)[cite: 164].
+- [cite_start]**`gr`**: References (FZF)[cite: 164].
+- [cite_start]**`K`**: Hover Documentation.
+- [cite_start]**`<leader>rn`**: Rename Variable.
+    * *Note:* This mapping causes the delay when trying to open Registers.
+- [cite_start]**`<leader>ca`**: Code Actions[cite: 113].
+- [cite_start]**`<leader>cd`**: Document Diagnostics[cite: 112].
+- [cite_start]**`<leader>cs`**: Document Symbols[cite: 112].
 
-### Oil File Manager
-- `g.`: Show hidden files.
-- `?`: Help.
+### AI (Neocodeium)
+- [cite_start]**`<Alt-l>`**: Accept suggestion[cite: 113].
+- [cite_start]**`<Alt-j>` / `<Alt-k>`**: Cycle suggestions[cite: 113].
+- [cite_start]**`<Alt-h>`**: Clear suggestion[cite: 113].
 
-## Neovim in VSCode
-- `C-A-a`: Codeium toggle chat.
-- Shift+Ctrl `up/down`: VSCode multiline cursor.
-- Shift+`E`: Exit multiline.
-- Added to user settings JSON:
-  - `H` / `L`: Focus previous/next tab.
-  - `Q`: Close tab.
-  - `C-w v` / `|`: Split vertical.
-  - `C-w s` / `_`: Split horizontal.
-- Shift+Alt `A`: Toggle block comment.
-- Ctrl `'`: Toggle line comment.
-- Commands: Toggle indentation to spaces, refresh extensions, toggle whitespace.
+### Comments & Swap
+- [cite_start]**`gcc`**: Toggle comment line[cite: 120].
+- [cite_start]**`gc`**: Toggle comment selection (Visual)[cite: 120].
+- [cite_start]**`cx`**: Swap items (select two args to swap)[cite: 82].
 
-## Additional Resources
-- [Vim Cheat Sheet](/vim-cheat.png)
+---
+
+## 6. Window & Tab Management
+
+### Windows (Splits)
+- [cite_start]**`<leader>sv`**: Split Vertical[cite: 110].
+- [cite_start]**`<leader>sh`** : Split Horizontal[cite: 110].
+- [cite_start]**`<leader>se`**: Equalize split sizes[cite: 110].
+- [cite_start]**`<leader>sx`**: Close split[cite: 110].
+- [cite_start]**`<leader>tr`**: Toggle Relative Numbers[cite: 207].
+
+### Tabs
+- [cite_start]**`<leader>to`**: Open New Tab[cite: 110].
+- [cite_start]**`<leader>tx`**: Close Tab[cite: 110].
+- [cite_start]**`<leader>tn` / `tp`**: Next / Prev Tab[cite: 110, 111].
+- [cite_start]**`<leader>tf`**: Move current buffer to new tab[cite: 111].
+
+---
+
+## 7. Treesitter Text Objects
+*Use after `d`, `c`, `y`, or `v`.*
+
+| Key | Object | Example |
+| :--- | :--- | :--- |
+| **`if` / `af`** | Function | [cite_start]`dif` (Delete inner func), `daf` (Delete all func)[cite: 157]. |
+| **`ic` / `ac`** | Class | [cite_start]`yic` (Yank inner class)[cite: 157]. |
+| **`ia` / `aa`** | Argument | [cite_start]`cia` (Change inner argument)[cite: 158]. |
+| **`il` / `al`** | Loop | [cite_start]`dal` (Delete loop)[cite: 158]. |
+| **`ii` / `ai`** | If/Conditional | [cite_start]`vii` (Select inside `if`)[cite: 159]. |
+
+---
+
+## 8. Macros & Registers
+- **`qa`**: Record macro to register `a`.
+- **`q`**: Stop recording.
+- **`@a`**: Play macro `a`.
+- **`@@`**: Replay last macro.
+- **`<C-r>a`**: Paste register `a` while in **Insert Mode**.
+- **`"0p`**: Paste from register 0 (the last *yank*, ignoring deletes).
+
+---
+
+## 9. Visual Block Mode Tricks
+*Enter with `Ctrl-v`.*
+
+1.  **Multi-Line Edit**: Select column → `Shift-I` → Type text → `Esc` (Applies to all).
+2.  **Append to Lines**: Select column → `$` (End of line) → `Shift-A` → Type text → `Esc`.
+3.  **Increment Numbers**: Select column of numbers → `g` `Ctrl-a`.
