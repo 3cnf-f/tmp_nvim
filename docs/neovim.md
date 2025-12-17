@@ -47,6 +47,7 @@
 ### Standard Motions (Normal Mode)
 - **`gg` / `G`**: Start / End of file.
 - **`^` / `$`**: First non-empty char / End of line.
+- **g_**: First non whitespace
 - **`%`**: Go to matching bracket `()[]{}`.
 - **`C-d` / `C-u`**: Scroll Down / Up half page.
 - **`C-o` / `C-i`**: Jump Back / Forward (Jumplist).
