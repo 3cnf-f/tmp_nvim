@@ -1,0 +1,276 @@
+
+==============================================================================
+dap:                                                                        ✅
+
+dap: Adapters ~
+
+dap.adapter: debugpy ~
+- Adapter is a function. Can't validate it
+
+dap.adapter: python ~
+- Adapter is a function. Can't validate it
+
+dap: Sessions ~
+- ✅ OK No active sessions
+
+==============================================================================
+fzf_lua:                                                                  3 ⚠️
+
+fzf-lua [required] ~
+- ✅ OK 'fzf' `0.67.0 (2ab923f3)`
+- ✅ OK 'git' `git version 2.43.0`
+- ✅ OK 'grep' `grep (GNU grep) 3.11`
+- ✅ OK 'find' `find (GNU findutils) 4.9.0`
+
+fzf-lua [optional] ~
+- ✅ OK `nvim-web-devicons` found
+
+fzf-lua [optional:media] ~
+- ⚠️ WARNING 'viu' not found
+- ⚠️ WARNING 'chafa' not found
+- ⚠️ WARNING 'ueberzugpp' not found
+
+fzf-lua [env] ~
+- ✅ OK `FZF_DEFAULT_OPTS` is not set
+- ✅ OK `FZF_DEFAULT_OPTS_FILE` is not set
+
+==============================================================================
+lazy:                                                               2 ⚠️  1 ❌
+
+lazy.nvim ~
+- {lazy.nvim} version `11.17.5`
+- ✅ OK {git} `version 2.43.0`
+- ✅ OK no existing packages found by other package managers
+- ✅ OK packer_compiled.lua not found
+
+luarocks ~
+- checking `hererocks` installation
+- ✅ OK no plugins require `luarocks`, so you can ignore any warnings below
+- ✅ OK {python3} `Python 3.12.3`
+- ❌ ERROR {/root/.local/share/nvim/lazy-rocks/hererocks/bin/luarocks} not installed
+- ⚠️ WARNING {/root/.local/share/nvim/lazy-rocks/hererocks/bin/lua} version `5.1` not installed
+- ⚠️ WARNING Lazy won't be able to install plugins that require `luarocks`.
+  Here's what you can do:
+   - fix your `luarocks` installation
+   - disable *hererocks* with `opts.rocks.hererocks = false`
+   - disable `luarocks` support completely with `opts.rocks.enabled = false`
+
+==============================================================================
+lspconfig:                                                                  ✅
+
+- Skipped. This healthcheck is redundant with `:checkhealth vim.lsp`.
+
+==============================================================================
+luarocks-nvim:                                                            1 ❌
+
+luarocks.nvim ~
+- luarocks system is not prepared
+- ✅ OK git is installed
+- ❌ ERROR lua is not installed! If you're on unix, please install it using your package manager. For windows use https://github.com/rjpcomputing/luaforwindows.
+- ✅ OK make is installed
+
+==============================================================================
+neocodeium:                                                                 ✅
+
+System information: ~
+- *linux* *(x64)*
+  If it is not correctly detected, then consider to report a bug at
+  https://github.com/monkoose/neocodeium/issues
+
+Checks: ~
+- ✅ OK *curl* is installed
+- ✅ OK *API* *key* is present
+- ✅ OK *Server* *binary* exists: ~/.codeium/bin/1.46.3/language_server_linux_x64
+- ✅ OK *Server* is running on port 41701 with pid 4960
+
+==============================================================================
+nvim-treesitter:                                                          1 ❌
+
+Requirements ~
+- ✅ OK Neovim was compiled with tree-sitter runtime ABI version 15 (required >=13).
+- ❌ ERROR tree-sitter-cli not found
+- ✅ OK tar 1.35.0 (/usr/bin/tar)
+- ✅ OK curl 8.5.0 (/usr/bin/curl)
+  curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.7
+  Release-Date: 2023-12-06, security patched: 8.5.0-2ubuntu10.6
+  Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp
+  Features: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd
+
+OS Info ~
+- version: #89-Ubuntu SMP PREEMPT_DYNAMIC Sat Oct 11 01:02:46 UTC 2025
+- machine: x86_64
+- release: 6.8.0-88-generic
+- sysname: Linux
+
+Install directory for parsers and queries ~
+- /root/.local/share/nvim/site/
+- ✅ OK is writable.
+- ✅ OK is in runtimepath.
+
+Installed languages     H L F I J ~
+
+  Legend: H[ighlights], L[ocals], F[olds], I[ndents], In[J]ections ~
+
+==============================================================================
+vim.deprecated:                                                             ✅
+
+- ✅ OK No deprecated functions detected
+
+==============================================================================
+vim.health:                                                               3 ⚠️
+
+Configuration ~
+- ✅ OK no issues found
+
+Runtime ~
+- ✅ OK $VIMRUNTIME: /opt/nvim-linux-x86_64/share/nvim/runtime
+
+Performance ~
+- ✅ OK Build type: Release
+
+Remote Plugins ~
+- ✅ OK Up to date
+
+terminal ~
+- key_backspace (kbs) terminfo entry: `key_backspace=\177`
+- key_dc (kdch1) terminfo entry: `key_dc=\E[3~`
+- $TERM_PROGRAM="tmux"
+
+tmux ~
+- ✅ OK escape-time: 0
+- ⚠️ WARNING `focus-events` is not enabled. |'autoread'| may not work.
+  - ADVICE:
+    - (tmux 1.9+ only) Set `focus-events` in ~/.tmux.conf:
+      set-option -g focus-events on
+- $TERM: tmux-256color
+- ⚠️ WARNING True color support could not be detected. |'termguicolors'| won't work properly.
+  - ADVICE:
+    - Add the following to your tmux configuration file, replacing XXX by the value of $TERM outside of tmux:
+      set-option -a terminal-features 'XXX:RGB'
+    - For older tmux versions use this instead:
+      set-option -a terminal-overrides 'XXX:Tc'
+
+External Tools ~
+- ⚠️ WARNING ripgrep not available
+
+==============================================================================
+vim.lsp:                                                                    ✅
+
+- LSP log level : WARN
+- Log path: /root/.local/state/nvim/lsp.log
+- Log size: 0 KB
+
+vim.lsp: Active Clients ~
+- No active clients
+
+vim.lsp: Enabled Configurations ~
+- jedi_language_server:
+  - cmd: { "jedi-language-server" }
+  - filetypes: python
+  - root_markers: { "pyproject.toml", "setup.py", ".git" }
+
+
+vim.lsp: File Watcher ~
+- file watching "(workspace/didChangeWatchedFiles)" disabled on all clients
+
+vim.lsp: Position Encodings ~
+- No active clients
+
+==============================================================================
+vim.provider:                                                             6 ⚠️
+
+Clipboard (optional) ~
+- ✅ OK Clipboard tool found: tmux
+
+Node.js provider (optional) ~
+- ⚠️ WARNING `node` and `npm` (or `yarn`, `pnpm`) must be in $PATH.
+  - ADVICE:
+    - Install Node.js and verify that `node` and `npm` (or `yarn`, `pnpm`) commands work.
+
+Perl provider (optional) ~
+- ⚠️ WARNING "Neovim::Ext" cpan module is not installed
+  - ADVICE:
+    - See :help |provider-perl| for more information.
+    - You can disable this provider (and warning) by adding `let g:loaded_perl_provider = 0` to your init.vim
+- ⚠️ WARNING No usable perl executable found
+
+Python 3 provider (optional) ~
+- ⚠️ WARNING No Python executable found that can `import neovim`. Using the first available executable for diagnostics.
+- ⚠️ WARNING Could not load Python :
+  /usr/bin/python3 does not have the "neovim" module.
+  python3.13 not found in search path or not executable.
+  /usr/bin/python3.12 does not have the "neovim" module.
+  python3.11 not found in search path or not executable.
+  python3.10 not found in search path or not executable.
+  python3.9 not found in search path or not executable.
+  python not found in search path or not executable.
+  - ADVICE:
+    - See :help |provider-python| for more information.
+    - You can disable this provider (and warning) by adding `let g:loaded_python3_provider = 0` to your init.vim
+- Executable: Not found
+
+Python virtualenv ~
+- ✅ OK no $VIRTUAL_ENV
+
+Ruby provider (optional) ~
+- ⚠️ WARNING `ruby` and `gem` must be in $PATH.
+  - ADVICE:
+    - Install Ruby and verify that `ruby` and `gem` commands work.
+
+==============================================================================
+vim.treesitter:                                                             ✅
+
+Treesitter features ~
+- Treesitter ABI support: min 13, max 15
+- WASM parser support: false
+
+Treesitter parsers ~
+- ✅ OK Parser: bash                      ABI: 15, path: /root/.local/share/nvim/lazy/nvim-treesitter/parser/bash.so
+- ✅ OK Parser: c                         ABI: 15, path: /opt/nvim-linux-x86_64/lib/nvim/parser/c.so
+- ✅ OK Parser: lua                       ABI: 14, path: /root/.local/share/nvim/lazy/nvim-treesitter/parser/lua.so
+- ✅ OK Parser: lua                  (not loaded), path: /opt/nvim-linux-x86_64/lib/nvim/parser/lua.so
+- ✅ OK Parser: markdown                  ABI: 14, path: /root/.local/share/nvim/lazy/nvim-treesitter/parser/markdown.so
+- ✅ OK Parser: markdown             (not loaded), path: /opt/nvim-linux-x86_64/lib/nvim/parser/markdown.so
+- ✅ OK Parser: markdown_inline           ABI: 15, path: /opt/nvim-linux-x86_64/lib/nvim/parser/markdown_inline.so
+- ✅ OK Parser: python                    ABI: 15, path: /root/.local/share/nvim/lazy/nvim-treesitter/parser/python.so
+- ✅ OK Parser: query                     ABI: 15, path: /opt/nvim-linux-x86_64/lib/nvim/parser/query.so
+- ✅ OK Parser: vim                       ABI: 15, path: /root/.local/share/nvim/lazy/nvim-treesitter/parser/vim.so
+- ✅ OK Parser: vim                  (not loaded), path: /opt/nvim-linux-x86_64/lib/nvim/parser/vim.so
+- ✅ OK Parser: vimdoc                    ABI: 15, path: /opt/nvim-linux-x86_64/lib/nvim/parser/vimdoc.so
+
+==============================================================================
+which-key:                                                                4 ⚠️
+
+- ✅ OK Most of these checks are for informational purposes only.
+  WARNINGS should be treated as a warning, and don't necessarily indicate a problem with your config.
+  Please |DON'T| report these warnings as an issue.
+
+Checking your config ~
+- ✅ OK |mini.icons| is installed
+- ✅ OK |nvim-web-devicons| is installed
+
+Checking for issues with your mappings ~
+- ✅ OK No issues reported
+
+checking for overlapping keymaps ~
+- ⚠️ WARNING In mode `n`, <<Space>s> overlaps with <<Space>sx>, <<Space>sv>, <<Space>se>, <<Space>sh>:
+  - <<Space>s>: Spelling Suggestions
+  - <<Space>sx>: Close current split
+  - <<Space>sv>: Split window vertically
+  - <<Space>se>: Make splits equal size
+  - <<Space>sh>: Split window horizontally
+- ⚠️ WARNING In mode `n`, <yS> overlaps with <ySS>:
+  - <yS>: Add a surrounding pair around a motion, on new lines (normal mode)
+  - <ySS>: Add a surrounding pair around the current line, on new lines (normal mode)
+- ⚠️ WARNING In mode `n`, <ys> overlaps with <yss>:
+  - <ys>: Add a surrounding pair around a motion (normal mode)
+  - <yss>: Add a surrounding pair around the current line (normal mode)
+- ⚠️ WARNING In mode `n`, <gc> overlaps with <gcc>:
+  - <gc>: Comment
+  - <gcc>: Comment line
+- ✅ OK Overlapping keymaps are only reported for informational purposes.
+  This doesn't necessarily mean there is a problem with your config.
+
+Checking for duplicate mappings ~
+- ✅ OK No duplicate mappings found
+
