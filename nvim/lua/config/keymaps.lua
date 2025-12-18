@@ -67,6 +67,12 @@ km.set(
   ":lua require'fzf-lua'.diagnostics_document({fzf_opts = { ['--wrap'] = true }})<cr>",
   { desc = "Document Diagnostics" }
 )
+-- === PANE NAVIGATION (Alt-Arrows) ===
+-- Jump between windows in Normal Mode
+vim.keymap.set("n", "<M-Left>", "<C-w>h", { desc = "Go to Left Window" })
+vim.keymap.set("n", "<M-Down>", "<C-w>j", { desc = "Go to Lower Window" })
+vim.keymap.set("n", "<M-Up>", "<C-w>k", { desc = "Go to Upper Window" })
+vim.keymap.set("n", "<M-Right>", "<C-w>l", { desc = "Go to Right Window" })
 
 km.set(
   "n",

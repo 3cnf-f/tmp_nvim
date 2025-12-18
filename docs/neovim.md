@@ -4,6 +4,8 @@
 **Leader Key:** Space (` `)
 
 ---
+## 0. Navigation
+- **`alt-arrow`**: Navigate between windows(works from REPL terminal as well).
 
 ## 1. The Swedish Triad (Unique Config)
 
@@ -24,17 +26,40 @@
 - **`öi` / `öI`**: Next / Prev **Conditional** (`if/else`)[cite: 163].
 - **`öf` / `öb`**: Next / Prev **Paragraph**[cite: 163].
 
-### `å` = Actions (Debugging)
-*Requires `pip install debugpy` in your venv.*
-- **`åc`**: Continue / Start[cite: 136].
-- **`åb`**: Toggle Breakpoint[cite: 136].
-- **`å1`**: Step Over[cite: 136].
-- **`åi`**: Step Into[cite: 136].
-- **`åu`**: Toggle Debug UI[cite: 137].
-- **`åx`**: Stop/Terminate[cite: 137].
-- **`åe`**: Evaluate Expression[cite: 139].
-- **`åd[f/s/t]`**: Dump variable to **f**ile / **s**plit / **t**ab[cite: 144, 145, 147].
+#### **`å` = Actions (Debugger / DAP)**
+*Strictly for controlling the execution flow when debugging.*
+- **`åc`**: **Continue** / Start Debugging.
+- **`åb`**: **Breakpoint** (Toggle).
+- **`åB`**: **Conditional Breakpoint** (Ask for condition).
+- **`åi` / `åo`**: Step **Into** / Step **Out**.
+- **`å1`**: Step **Over**.
+- **`år`**: Open **Debug Console** (Internal DAP REPL, *not* Iron).
+- **`åu`**: Toggle **Debug UI**.
+- **`åe`**: **Evaluate** expression.
+- **`ådf` / `åds`**: Dump variable to **F**ile / **S**plit.
 
+### `å` vs `Å`: The Precision Split
+*We have separated "Debugging" from "Interactive Coding" to prevent accidents.*
+
+#### **`Å` = Alchemist (Interactive REPL / Iron)**
+*Shift + `å`. For dynamic code execution (Jupyter-style).*
+
+**Management**
+- **`Åt`**: **Toggle REPL** (Open/Close side window).
+- **`År`**: **Restart Kernel** (Kill Python & start fresh).
+- **`Åf`**: **Focus REPL** (Jump to it).
+- **`Åh`**: **Hide REPL** (Keep running, but close split).
+- **`Åc`**: **Clear Screen**.
+
+**Sending Code ("The Mix")**
+- **`Åss`**: Send **Current Line**.
+- **`Åsf`**: Send **Whole File**.
+- **`Åsb`**: Send **Block** (Visually selects paragraph & sends).
+- **`Ås` + motion**: The Operator.
+    - *Example:* `Åsip` → Send Inner Paragraph.
+    - *Example:* `Åsaf` → Send Function.
+    - *Example:* `Ås$` → Send to end of line.
+- **`Ås` (Visual)**: Send currently selected text.
 ---
 
 ## 2. Core Editing & Motions
@@ -165,3 +190,40 @@
 1.  **Multi-Line Edit**: Select column → `Shift-I` → Type text → `Esc` (Applies to all).
 2.  **Append to Lines**: Select column → `$` (End of line) → `Shift-A` → Type text → `Esc`.
 3.  **Increment Numbers**: Select column of numbers → `g` `Ctrl-a`.
+
+
+## [NEW] 11. The Tmux Runner (Heavy Lifting)
+*Offloads execution to a dedicated pane (`test_pane`) to keep the editor fluid.*
+
+**Setup**
+1. Press `ö` in **Tmux** (not Vim) to generate the 4-pane IDE layout.
+2. Ensure you are in the `editor_pane`.
+
+**Commands**
+- **`<leader>RT`**: **Run This File**.
+    - *Action:* Zooms `test_pane` → Runs `python current_file.py` → Waits for Enter → Zooms back.
+- **`<leader>RM`**: **Run Root Main**.
+    - *Action:* Runs `python /git_root/main.py`.
+- **`<leader>RA`**: **Run Root App**.
+    - *Action:* Runs `python /git_root/interface/app.py`.
+
+---
+
+### [Examples] The "Combo" Workflow
+
+**Scenario: Fixing a Bug in a Function**
+
+1.  **Navigate:** Use `ön` (Next Function) to find the buggy function.
+2.  **Test Interactive:**
+    *   Open REPL: `Åt`.
+    *   Send function to REPL: `Åsaf` (Send Around Function).
+    *   Go to REPL: `Åf`.
+    *   Test it manually.
+    *   Jump back: `Alt-Left`.
+3.  **Debug Deeply:**
+    *   Set Breakpoint: `åb`.
+    *   Run Debugger: `åc`.
+    *   Step through: `å1` (Over), `åi` (Into).
+    *   Inspect var: `åh` (Hover).
+4.  **Run Full Test:**
+    *   Run the file in Tmux Runner: `<leader>RT`.
