@@ -1,0 +1,19 @@
+# Swap files
+*.swp
+*.swo
+
+# Session files
+Session.vim
+
+# Netrw / Directory checks
+.netrwhist
+
+# Logs
+*.log
+
+# Python cache (if you run python inside config folder)
+__pycache__/
+*.pyc
+
+# Local machine specific data (optional, but good practice)
+.DS_Store
