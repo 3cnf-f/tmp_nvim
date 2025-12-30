@@ -5,7 +5,7 @@ podman run -it \
   -e TERM=xterm-256color \
   -e TZ=Europe/Stockholm \
   -e DEBIAN_FRONTEND=noninteractive \
-  i-restart=unless-stopped \
+  --restart=unless-stopped \
   docker.io/ubuntu:latest /bin/bash
 
 ```
