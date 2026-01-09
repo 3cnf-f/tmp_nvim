@@ -139,10 +139,6 @@ git push --set-upstream origin flash
 git push
 ```
 
-## to join a running tmux session called work but allow for independant navigation:
-```
-tmux new-session -t work -s browser_view
-```
 
 ## to run a ttyd on port 11011 with fonts
 ### install binary that contains fonts
@@ -158,7 +154,11 @@ mv ttyd ~/.local/bin/ttyd
 ```
 ttyd -p 11011 -W /bin/bash
 ```
-
+### to join a running tmux session called work but allow for independant navigation:
+```
+tmux new-session -t work -s browser_view
+```
+## Other stuff:
  
 ```
 save pip requirements but only modules that are used
