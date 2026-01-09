@@ -144,10 +144,19 @@ git push
 tmux new-session -t work -s browser_view
 ```
 
-## to run a ttyd on port 11011 with fonts (needs the .html and font file in the /dev1 folder
- - remember chrome is being assy about running from local host so host via cloudflare for example
+## to run a ttyd on port 11011 with fonts
+### install binary that contains fonts
 ```
-ttyd -p 11011 -W -I /dev1/index.html /bin/bash                                                                                                       
+[ -d ~/.local/bin ] || mkdir ~/.local/bin &&\
+wget https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 &&\
+mv ttyd.x86_64 ttyd &&\
+chmod +x ttyd &&\
+mv ttyd ~/.local/bin/ttyd 
+```
+
+### then run:
+```
+ttyd -p 11011 -W /bin/bash
 ```
 
  
