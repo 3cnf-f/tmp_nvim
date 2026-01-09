@@ -139,6 +139,17 @@ git push --set-upstream origin flash
 git push
 ```
 
+## to join a running tmux session called work but allow for independant navigation:
+```
+tmux new-session -t work -s browser_view
+```
+
+## to run a ttyd on port 11011 with fonts (needs the .html and font file in the /dev1 folder
+ - remember chrome is being assy about running from local host so host via cloudflare for example
+```
+ttyd -p 11011 -W -I /dev1/index.html /bin/bash                                                                                                       
+```
+
  
 ```
 save pip requirements but only modules that are used
