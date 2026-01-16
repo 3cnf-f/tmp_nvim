@@ -235,8 +235,31 @@ return {
     end, vim.tbl_extend("force", opts, { desc = "Send Block (Context Aware)" }))
 
 
-    -- Standard Iron Management (Internal Only)
-    map("n", "År", "<cmd>IronRestart<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Restart Kernel" }))
+    -- ==========================================
+    -- MANAGEMENT (RESTART & CLEAR)
+    -- ==========================================
+
+    -- [RESTART REPL] (Consolidated)
+    map("n", "År", function()
+      if use_tmux_remote then
+        -- 1. EXTERNAL (TMUX) LOGIC
+        local ctx = get_context()
+        if ctx.ft == "python" then
+           local target = ":" .. ctx.win_name
+           -- Send C-d to quit session
+           vim.fn.system({"tmux", "send-keys", "-t", target, "quit()", "Enter"})
+           -- Start ipython again
+           vim.fn.system({"tmux", "send-keys", "-t", target, "ipython", "Enter"})
+           vim.notify("🔄 Restarting Tmux Session (" .. ctx.win_name .. ")", vim.log.levels.INFO)
+        else
+           vim.notify("⚠️  Tmux restart is only configured for Python", vim.log.levels.WARN)
+        end
+      else
+        -- 2. INTERNAL (IRON) LOGIC
+        vim.cmd("IronRestart")
+      end
+    end, vim.tbl_extend("force", opts, { desc = "Restart REPL (Context Aware)" }))
+
     map("n", "Åf", "<cmd>IronFocus<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Focus REPL" }))
     map("n", "Åh", "<cmd>IronHide<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Hide UI" }))
     map("n", "Åc", function() require("iron.core").send(nil, string.char(12)) end, vim.tbl_extend("force", opts, { desc = "Iron: Clear Screen" }))
@@ -249,3 +272,4 @@ return {
     map('t', '<M-Right>', '<C-\\><C-n><C-w>l', { desc = "Jump Right" })
   end,
 }
+

@@ -25,3 +25,18 @@ vim.opt.scrolloff = 5
 vim.opt.cmdheight = 1
 vim.opt.number = true
 vim.opt.fillchars:append({ vert = "│", eob = " " })
+
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+  },
+  -- We DELETE the 'paste' section here. 
+  -- Why? Because reading clipboard via escape codes is blocked by terminals.
+  -- Use Ctrl+Shift+V to paste from system clipboard instead.
+  paste = {
+    ['+'] = function() return {} end,
+    ['*'] = function() return {} end,
+  },
+}

@@ -105,7 +105,8 @@ vim.keymap.set("i", "<A-k>", function() require("neocodeium").cycle_or_complete(
 vim.keymap.set("i", "<A-h>", neocodeium.clear)
 vim.keymap.set("i", "<A-c>", neocodeium.cycle_or_complete)
 vim.keymap.set("i", "<A-ö>", neocodeium.accept_word, { desc = "AI: Accept Word" })
-vim.keymap.set("i", "<A-ä>", neocodeium.accept_line, { desc = "AI: Accept Line" })
+vim.keymap.set("i", "<A-o>", neocodeium.accept_word, { desc = "AI: Accept Word" })
+vim.keymap.set("i", "<A-p>", neocodeium.accept_line, { desc = "AI: Accept Line" })
 
 -- ============================================================================
 -- "DANK" CLIPBOARD OPERATOR (Alt-y)
