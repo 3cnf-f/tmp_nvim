@@ -154,6 +154,11 @@ mv ttyd ~/.local/bin/ttyd
 ```
 ttyd -p 11011 -W /bin/bash
 ```
+
+### if on host running on container
+```
+odman exec -d container_name /root/.local/bin/ttyd -W -p port_number /bin/bash
+```
 ### to join a running tmux session called work but allow for independant navigation:
 ```
 tmux new-session -t work -s browser_view
