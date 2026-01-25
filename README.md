@@ -73,7 +73,9 @@ cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/addto_bashaliases >>~/.bash_aliases &&\
 mkdir ~/.ssh &&\
 cat ~/.config/addto_ssh_config >>~/.ssh/config &&\
-source ~/.bashrc
+source ~/.bashrc &&\
+mkdir -p ~/.ipython/profile_default/startup/ &&\
+cp ~/.config/99-nvim-sync.py ~/.ipython/profile_default/startup/
 
 ```
 
