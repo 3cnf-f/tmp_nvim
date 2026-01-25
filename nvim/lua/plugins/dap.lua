@@ -158,6 +158,26 @@ return {
         require('dap').repl.execute(cmd)
         vim.defer_fn(function() vim.cmd("tabnew " .. filepath) end, 200)
       end, vim.tbl_extend("force", opts, { desc = "DAP: Dump Var to Tab" }))
+
+      -- NEW: Dump to Socket (Remote Nvim Server)
+      map("n", "ådv", function()
+        local word = vim.fn.expand('<cword>')
+        local socket_path = "/tmp/nvimsocket"
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        
+        -- 1. Execute the dump in the current debug session
+        local dump_cmd = string.format("import pprint; open('%s','w').write(pprint.pformat(%s))", filepath, word)
+        require('dap').repl.execute(dump_cmd)
+        
+        -- 2. Send command to the socket to open the file in a new tab
+        -- We wait slightly to ensure the file is written
+        vim.defer_fn(function()
+          local remote_cmd = string.format("nvim --server %s --remote-send '<C-\\><C-n>:tabnew %s<CR>'", socket_path, filepath)
+          vim.fn.system(remote_cmd)
+          vim.notify("Sent " .. word .. " to Remote Nvim Socket")
+        end, 200)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Dump Var to Socket" }))
+
     end,
   },
 }
