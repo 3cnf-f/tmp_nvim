@@ -49,6 +49,32 @@ return {
     -- 2. HELPER: TMUX UTILS
     -- ==========================================
     
+    -- Function to spawn the Nvim Socket Server with automatic cleanup
+    local function spawn_nvim_server()
+      local win_name = "nvimServer"
+      local socket_path = "/tmp/nvimsocket"
+      
+      -- Check if window exists
+      local handle = io.popen("tmux list-windows -F '#{window_name}'")
+      local result = handle:read("*a")
+      handle:close()
+
+      if string.find(result, "^" .. win_name .. "\n") or string.find(result, "\n" .. win_name .. "\n") then
+        vim.notify("🔗 Socket server window '" .. win_name .. "' already exists.", vim.log.levels.WARN)
+        return
+      end
+
+      vim.notify("⚡ Cleaning socket and starting Nvim Server...", vim.log.levels.INFO)
+      
+      -- 1. Spawn Window
+      vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
+      
+      -- 2. Cleanup stale socket and start nvim
+      -- We run 'rm -f' first to ensure the socket path is available
+      local cmd = string.format("rm -f %s && nvim --listen %s", socket_path, socket_path)
+      vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, cmd, "Enter"})
+    end
+
     -- A. Bootstrapper (Create Context-Specific Window)
     local function bootstrap_tmux()
       local ctx = get_context()
@@ -158,7 +184,6 @@ return {
         scratch_repl = true,
         repl_definition = { 
             python = { command = get_python_command(), format = require("iron.fts.common").bracketed_paste },
-            -- Added 'sh' support for Internal Mode
             sh = { command = {"bash"} } 
         },
         repl_open_cmd = view.split.vertical.botright(0.45),
@@ -169,12 +194,17 @@ return {
     })
 
     -- ==========================================
-    -- 4. KEYMAPS (Å Namespace)
+    -- 4. KEYMAPS (Å/å Namespace)
     -- ==========================================
     local map = vim.keymap.set
     local opts = { noremap = true, silent = true }
 
-    -- [TOGGLE]
+    -- [å] mappings
+    map("n", "åt", function()
+      spawn_nvim_server()
+    end, vim.tbl_extend("force", opts, { desc = "Tmux: Start Nvim Socket Server" }))
+
+    -- [Å] mappings
     map("n", "Åä", function()
         use_tmux_remote = not use_tmux_remote
         local ctx = get_context()
@@ -182,17 +212,14 @@ return {
         print("Target: " .. dest)
     end, vim.tbl_extend("force", opts, { desc = "Toggle Iron/Tmux Target" }))
 
-    -- [INITIATE]
     map("n", "Åt", function()
       if use_tmux_remote then bootstrap_tmux() else vim.cmd("IronRepl") end
     end, vim.tbl_extend("force", opts, { desc = "Toggle REPL / Create Tmux" }))
 
-    -- [SEND LINE]
     map("n", "Åss", function() 
       if use_tmux_remote then send_to_tmux(vim.api.nvim_get_current_line()) else require("iron.core").send_line() end
     end, vim.tbl_extend("force", opts, { desc = "Send Line (Context Aware)" }))
 
-    -- [SEND FILE]
     map("n", "Åsf", function()
       if use_tmux_remote then 
         local whole_file = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
@@ -202,7 +229,6 @@ return {
       end
     end, vim.tbl_extend("force", opts, { desc = "Send File (Context Aware)" }))
 
-    -- [SEND MOTION] (Operator)
     map("n", "Ås", function()
       if use_tmux_remote then
         vim.go.operatorfunc = "v:lua.tmux_send_operator"
@@ -212,7 +238,6 @@ return {
       end
     end, vim.tbl_extend("force", opts, { expr = true, desc = "Send Motion (Context Aware)" }))
 
-    -- [SEND VISUAL]
     map("x", "Ås", function()
       if use_tmux_remote then
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'x', false)
@@ -222,7 +247,6 @@ return {
       end
     end, vim.tbl_extend("force", opts, { desc = "Send Selection (Context Aware)" }))
 
-    -- [SEND BLOCK] (Paragraph)
     map("n", "Åsb", function()
       if use_tmux_remote then
         vim.cmd("normal! vip")
@@ -234,28 +258,18 @@ return {
       end
     end, vim.tbl_extend("force", opts, { desc = "Send Block (Context Aware)" }))
 
-
-    -- ==========================================
-    -- MANAGEMENT (RESTART & CLEAR)
-    -- ==========================================
-
-    -- [RESTART REPL] (Consolidated)
     map("n", "År", function()
       if use_tmux_remote then
-        -- 1. EXTERNAL (TMUX) LOGIC
         local ctx = get_context()
         if ctx.ft == "python" then
            local target = ":" .. ctx.win_name
-           -- Send C-d to quit session
            vim.fn.system({"tmux", "send-keys", "-t", target, "quit()", "Enter"})
-           -- Start ipython again
            vim.fn.system({"tmux", "send-keys", "-t", target, "ipython", "Enter"})
            vim.notify("🔄 Restarting Tmux Session (" .. ctx.win_name .. ")", vim.log.levels.INFO)
         else
            vim.notify("⚠️  Tmux restart is only configured for Python", vim.log.levels.WARN)
         end
       else
-        -- 2. INTERNAL (IRON) LOGIC
         vim.cmd("IronRestart")
       end
     end, vim.tbl_extend("force", opts, { desc = "Restart REPL (Context Aware)" }))
@@ -264,7 +278,6 @@ return {
     map("n", "Åh", "<cmd>IronHide<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Hide UI" }))
     map("n", "Åc", function() require("iron.core").send(nil, string.char(12)) end, vim.tbl_extend("force", opts, { desc = "Iron: Clear Screen" }))
 
-    -- Terminal Nav
     map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = "Iron: Exit Term Mode" })
     map('t', '<M-Left>',  '<C-\\><C-n><C-w>h', { desc = "Jump Left" })
     map('t', '<M-Down>',  '<C-\\><C-n><C-w>j', { desc = "Jump Down" })
@@ -272,4 +285,3 @@ return {
     map('t', '<M-Right>', '<C-\\><C-n><C-w>l', { desc = "Jump Right" })
   end,
 }
-
