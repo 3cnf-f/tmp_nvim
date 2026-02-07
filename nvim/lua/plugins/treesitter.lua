@@ -8,7 +8,7 @@ return {
   config = function()
     require("nvim-treesitter.configs").setup({
       -- Languages to install
-      ensure_installed = { "python", "lua", "markdown", "vim", "bash" },
+      ensure_installed = { "python", "lua", "markdown", "vim", "bash","json" },
       
       -- Enable highlighting
       highlight = { enable = true },
