@@ -91,7 +91,7 @@ cat ~/.config/addto_etc_hosts >>/etc/hosts
 
 ```bash
 
-apt install -y python3-pip python3-venv pipx python3-flask
+apt install -y python3-pip python3-venv pipx python3-ipython
 ```
 
 
