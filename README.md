@@ -10,6 +10,12 @@ podman run -it \
 
 ```
 
+## If running containers with cuda adapt the following
+```
+podman run --rm --device nvidia.com/gpu=all docker.io/library/ubuntu:24.04 nvidia-smi
+```
+
+
 ## til for loads of stuff including tmux and nvim
 https://github.com/jbranchaud/til
 
