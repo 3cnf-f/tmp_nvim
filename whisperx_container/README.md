@@ -1,3 +1,5 @@
+~$ podman exec -d pt_official python /workspace/server.py
+
 ~$ curl -X POST http://localhost:11400/start
 {"status":"success","message":"Engine is hot and ready."}
 
