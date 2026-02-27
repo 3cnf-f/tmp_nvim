@@ -11,8 +11,8 @@ f_get_hz_sbx() { scp -i .ssh/id_ed25519 -P 23 -r $F_STORAGEBOX_USER_IP:/home/$1 
 f_sbx_command() { ssh -i .ssh/id_ed25519 -p23  $F_STORAGEBOX_USER_IP $@ ;} #doc run command on sbx
 f_bubm_get() { scp -i .ssh/id_ed25519 -r $F_BUBM_USER_IP:/home/fa/$1 .;} #doc get from bubu
 f_bubm_send() { scp -i .ssh/id_ed25519 -r "$1" $F_BUBM_USER_IP:/home/fa/ ;} #doc send to bubu
-f_hz_pbr_get() { scp -i .ssh/id_ed25519 -r $F_PBR_USER_IP:/home/fa/$1 .;} #doc get from pbr
-f_hz_pbr_send() { scp -i .ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/fa/ ;} #doc send to pbr
+f_hz_pbr_get() { scp -i .ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/$1 .;} #doc get from pbr
+f_hz_pbr_send() { scp -i .ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/ ;} #doc send to pbr
 f_cmd_pbr() { ssh -i .ssh/id_ed25519  $F_PBR_USER_IP  $@ ;} #doc run command on podamanis
 f_si_get() { scp -i .ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/silverbullet/space/$1 .;} #doc get from si
 f_si_send() { scp -i .ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/silverbullet/space/ ;} #doc send to si
