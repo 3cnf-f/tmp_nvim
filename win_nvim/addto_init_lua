@@ -1,0 +1,3 @@
+-- At the very top, before plugins load
+local portable_git = "C:\\Portable\\Git\\bin"  -- change to your folder
+vim.env.PATH = vim.env.PATH .. ";" .. portable_git
