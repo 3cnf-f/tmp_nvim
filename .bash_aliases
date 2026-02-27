@@ -38,7 +38,7 @@ f_ocr_img() {
 
     # 4. Execute API Call
     # Note: Using your original prompt as requested
-    curl -s http://100.86.62.206:11434/api/generate -d @- <<EOF | jq -r '.response'
+    curl -s http://F_BUBM_IP:11434/api/generate -d @- <<EOF | jq -r '.response'
 {
   "model": "deepseek-ocr:3b",
   "prompt": "Extract the text in the image.",
