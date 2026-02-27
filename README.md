@@ -151,7 +151,7 @@ git push
 ## to run a ttyd on port 11011 with fonts
 ### install binary that contains fonts
 ```
-[ -d ~/.local/bin ] || mkdir ~/.local/bin &&\
+[ -d ~/.local/bin ] || mkdir -p ~/.local/bin &&\
 wget https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 &&\
 mv ttyd.x86_64 ttyd &&\
 chmod +x ttyd &&\
