@@ -1,3 +1,5 @@
+echo "ﮊ ﮋ ﮌ ﮍ ﮎ ﮏ ﮐ ﮑ"
+
 #ALWAYS specify these for less bullcrap
 ```
 podman run -it \
