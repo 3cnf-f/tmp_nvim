@@ -1,3 +1,5 @@
+local wezterm = require 'wezterm'
+
 config.keys = {
   -- ... your other stuff ...
   {
