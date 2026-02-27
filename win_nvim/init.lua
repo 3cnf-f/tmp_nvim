@@ -1,3 +1,7 @@
+-- At the very top, before plugins load
+local portable_git = "H:\\007git\\bin"  -- change to your folder
+vim.env.PATH = vim.env.PATH .. ";" .. portable_git
+
 -- win_keymaps.lua
 -- Portable settings for Windows neovim (no plugins required).
 -- Load from nvim command line with:  :luafile C:\path\to\win_keymaps.lua
