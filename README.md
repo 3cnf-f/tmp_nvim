@@ -40,6 +40,15 @@ git config --global user.name 3cnf-f
 apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx sudo fd-find ripgrep
 ```
 
+## install upload download
+```
+sudo apt update
+sudo apt install software-properties-common   # if not already installed
+sudo add-apt-repository ppa:trzsz/ppa
+sudo apt update
+sudo apt install trzsz
+
+```
 ## install github cli
 ```bash
 (type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
@@ -165,7 +174,7 @@ ttyd -p 11011 -W /bin/bash
 
 ### if on host running on container
 ```
-podman exec -d win_nvim_dev /root/.local/bin/ttyd -W -p 11310 -t enableTrzsz=true -t enableSixel=true /bin/bash
+podman exec -d win_nvim_dev /root/.local/bin/ttyd -W -p 11310 -t enableTrzsz=true -t enableSixel=true -t enableZmodem=true /bin/bash
 ```
 ### to join a running tmux session called work but allow for independant navigation:
 ```
