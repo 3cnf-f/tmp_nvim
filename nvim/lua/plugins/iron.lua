@@ -1,3 +1,5 @@
+if vim.g.is_windows then return {} end
+
 return {
   "Vigemus/iron.nvim",
   event = "VeryLazy",
@@ -48,12 +50,12 @@ return {
     -- ==========================================
     -- 2. HELPER: TMUX UTILS
     -- ==========================================
-    
+
     -- Function to spawn the Nvim Socket Server with automatic cleanup
     local function spawn_nvim_server()
       local win_name = "nvimServer"
       local socket_path = "/tmp/nvimsocket"
-      
+
       -- Check if window exists
       local handle = io.popen("tmux list-windows -F '#{window_name}'")
       local result = handle:read("*a")
@@ -65,10 +67,10 @@ return {
       end
 
       vim.notify("⚡ Cleaning socket and starting Nvim Server...", vim.log.levels.INFO)
-      
+
       -- 1. Spawn Window
       vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
-      
+
       -- 2. Cleanup stale socket and start nvim
       -- We run 'rm -f' first to ensure the socket path is available
       local cmd = string.format("rm -f %s && nvim --listen %s", socket_path, socket_path)
@@ -91,12 +93,12 @@ return {
       end
 
       local cwd = vim.fn.getcwd()
-      
+
       -- Spawn Window
       vim.notify("🚀 Spawning " .. win_name .. " (" .. ctx.ft .. ") in background...", vim.log.levels.INFO)
       vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
       vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, "cd " .. cwd, "Enter"})
-      
+
       -- Python Specific: Venv & IPython
       if ctx.use_venv then
         local venv = os.getenv("VIRTUAL_ENV") or ""
@@ -119,7 +121,7 @@ return {
 
       -- 1. Load text into buffer
       vim.fn.system({"tmux", "load-buffer", "-"}, text)
-      
+
       -- 2. Paste Logic
       if ctx.use_magic then
         -- Python/IPython: Use %paste magic
@@ -150,7 +152,7 @@ return {
       local start_pos = vim.api.nvim_buf_get_mark(0, '[')
       local end_pos = vim.api.nvim_buf_get_mark(0, ']')
       local lines = vim.api.nvim_buf_get_lines(0, start_pos[1]-1, end_pos[1], false)
-      
+
       if #lines > 0 and type == 'char' then
          lines[#lines] = string.sub(lines[#lines], 1, end_pos[2] + 1)
          lines[1] = string.sub(lines[1], start_pos[2] + 1)
@@ -182,15 +184,15 @@ return {
     iron.setup({
       config = {
         scratch_repl = true,
-        repl_definition = { 
+        repl_definition = {
             python = { command = get_python_command(), format = require("iron.fts.common").bracketed_paste },
-            sh = { command = {"bash"} } 
+            sh = { command = {"bash"} }
         },
         repl_open_cmd = view.split.vertical.botright(0.45),
       },
       highlight = { italic = true },
-      keymaps = {}, 
-      ignore_blank_lines = true, 
+      keymaps = {},
+      ignore_blank_lines = true,
     })
 
     -- ==========================================
@@ -216,16 +218,16 @@ return {
       if use_tmux_remote then bootstrap_tmux() else vim.cmd("IronRepl") end
     end, vim.tbl_extend("force", opts, { desc = "Toggle REPL / Create Tmux" }))
 
-    map("n", "Åss", function() 
+    map("n", "Åss", function()
       if use_tmux_remote then send_to_tmux(vim.api.nvim_get_current_line()) else require("iron.core").send_line() end
     end, vim.tbl_extend("force", opts, { desc = "Send Line (Context Aware)" }))
 
     map("n", "Åsf", function()
-      if use_tmux_remote then 
+      if use_tmux_remote then
         local whole_file = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
         send_to_tmux(whole_file)
-      else 
-        require("iron.core").send_file() 
+      else
+        require("iron.core").send_file()
       end
     end, vim.tbl_extend("force", opts, { desc = "Send File (Context Aware)" }))
 

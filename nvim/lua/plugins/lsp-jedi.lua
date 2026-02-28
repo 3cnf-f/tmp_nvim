@@ -1,3 +1,5 @@
+if vim.g.is_windows then return {} end
+
 return {
   "neovim/nvim-lspconfig",
   config = function()
@@ -5,7 +7,7 @@ return {
       callback = function(args)
         -- Base options used for all mappings
         local opts = { buffer = args.buf, noremap = true, silent = true }
-        
+
         -- Helper function to merge 'desc' with the base 'opts'
         local function map(keys, func, desc)
           vim.keymap.set("n", keys, func, vim.tbl_extend("force", opts, { desc = desc }))
@@ -16,7 +18,7 @@ return {
         map("gr", require("fzf-lua").lsp_references, "Go to References")
         map("K", vim.lsp.buf.hover, "Hover Documentation")
         map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
-        
+
         vim.diagnostic.config({ virtual_text = true })
       end,
     })

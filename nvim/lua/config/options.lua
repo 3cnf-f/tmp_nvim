@@ -1,42 +1,71 @@
-vim.opt.number=true
--- look at  kickstarter.lua options for examples of well commented options
--- https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
----
-vim.opt.expandtab = true -- Convert tabs to spaces
-vim.opt.shiftwidth = 4 -- Amount to indent with << and >>
-vim.opt.tabstop = 4 -- How many spaces are shown per Tab
-vim.opt.softtabstop = 4 -- How many spaces are applied when pressing Tab
+-- =============================================================================
+-- config/options.lua  –  vim.opt settings (OS-agnostic unless noted)
+-- =============================================================================
 
-vim.opt.smarttab = true
-vim.opt.smartindent = true
-vim.opt.autoindent = true -- Keep identation from previous line
-vim.opt.undofile = true
-vim.opt.cursorline = true
--- Enable break indent
-vim.opt.breakindent = true
-vim.opt.signcolumn = "yes"
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-vim.opt.scrolloff = 5
-vim.opt.cmdheight = 1
-vim.opt.number = true
-vim.opt.fillchars:append({ vert = "│", eob = " " })
+local o = vim.opt
 
-vim.g.clipboard = {
-  name = 'OSC 52',
-  copy = {
-    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-  },
-  -- We DELETE the 'paste' section here. 
-  -- Why? Because reading clipboard via escape codes is blocked by terminals.
-  -- Use Ctrl+Shift+V to paste from system clipboard instead.
-  paste = {
-    ['+'] = function() return {} end,
-    ['*'] = function() return {} end,
-  },
-}
+-- Line numbers
+o.number      = true
+o.cursorline  = true
+o.signcolumn  = "yes"
+o.scrolloff   = 5
+o.cmdheight   = 1
+
+-- Splits
+o.splitright  = true
+o.splitbelow  = true
+
+-- Search
+o.ignorecase  = true
+o.smartcase   = true
+
+-- Whitespace display
+o.list      = true
+o.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
+-- Indentation
+o.expandtab   = true
+o.shiftwidth  = 4
+o.tabstop     = 4
+o.softtabstop = 4
+o.smarttab    = true
+o.smartindent = true
+o.autoindent  = true
+o.breakindent = true
+
+-- Persistence
+o.undofile  = true
+o.swapfile  = false
+
+-- UI
+o.showmode = false
+o.fillchars:append({ vert = "│", eob = " " })
+
+-- =============================================================================
+-- Working directory
+-- =============================================================================
+if vim.g.is_windows then
+  vim.fn.chdir("H:\\dokument\\")
+end
+
+-- =============================================================================
+-- Clipboard
+-- =============================================================================
+if vim.g.is_windows then
+  -- Windows: Neovim talks to the OS clipboard directly via win32yank / built-in
+  o.clipboard = "unnamedplus"
+else
+  -- Linux/remote: use OSC 52 so it works over SSH / inside tmux.
+  -- Paste is intentionally left as a no-op; use Ctrl-Shift-V in the terminal.
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+      ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+    },
+    paste = {
+      ["+"] = function() return {} end,
+      ["*"] = function() return {} end,
+    },
+  }
+end

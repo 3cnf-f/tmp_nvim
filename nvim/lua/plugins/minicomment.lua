@@ -1,25 +1,42 @@
+-- mini.comment: toggle comments with gc / gcc.
+--
+-- The correct comment syntax is detected from the filetype automatically:
+--   Lua   →  --
+--   Python →  #
+--   JS/TS →  //
+--   HTML  →  <!-- -->
+-- pad_comment_parts = true always inserts a space after the token (-- text, not --text).
+--
+-- Keymaps
+-- -------
+--   gcc              Toggle comment on the current line.
+--   gc <motion>      Toggle comment on lines covered by the motion.
+--                    Examples:  gc3j  (3 lines down)   gc ip  (inner paragraph)
+--   gc (visual)      Toggle comment on the selected lines.
+--
+-- These keymaps are re-declared below (pointing back at themselves via remap=true)
+-- only to attach [comment] description tags so <leader>k search finds them.
+
 return {
   "echasnovski/mini.comment",
-  version = false, -- Recommended for 'mini' plugins to use main branch
-  dependencies = { 
-    -- Integrates with your existing Treesitter text objects
-    "nvim-treesitter/nvim-treesitter-textobjects", 
-  },
-  opts = {
-    -- Options
-    options = {
-      custom_commentstring = nil, -- Uses nvim-ts-context-commentstring if installed
-      ignore_blank_line = false,  -- Allow commenting blank lines
-      start_of_line = false,      -- Place comment at indentation, not start of line
-      pad_comment_parts = true,   -- Add space after comment symbol (e.g., "# Text")
-    },
-    
-    -- Mappings (Standard Vim)
-    mappings = {
-      comment = "gc",      -- Operator-pending (e.g., 'gc' + 'af' = Comment Around Function)
-      comment_line = "gcc", -- Comment current line
-      comment_visual = "gc", -- Comment selection in visual mode
-      textobject = "gc",   -- Text object for "comment" (e.g., 'dgc' deletes a comment)
-    },
-  },
+  version = false,
+  config  = function()
+    require("mini.comment").setup({
+      options = {
+        pad_comment_parts = true,  -- always add a space: // text, not //text
+      },
+      mappings = {
+        comment        = "gc",
+        comment_line   = "gcc",
+        comment_visual = "gc",
+        textobject     = "gc",
+      },
+    })
+
+    -- Re-declare with [comment] prefix so <leader>k search works
+    local km = vim.keymap.set
+    km("n", "gcc", "gcc", { remap = true, desc = "[comment] toggle line" })
+    km("n", "gc",  "gc",  { remap = true, desc = "[comment] toggle (+ motion)" })
+    km("x", "gc",  "gc",  { remap = true, desc = "[comment] toggle selection" })
+  end,
 }

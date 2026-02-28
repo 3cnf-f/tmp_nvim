@@ -1,3 +1,5 @@
+if vim.g.is_windows then return {} end
+
 -- add this to the file where you setup your other plugins:
 return {
 {

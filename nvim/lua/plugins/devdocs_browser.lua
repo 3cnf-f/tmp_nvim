@@ -4,7 +4,7 @@
 local function open_devdocs(query)
   local ft = vim.bo.filetype
   local word = query or vim.fn.expand("<cword>")
-  
+
   -- Map your common Neovim filetypes to DevDocs slugs
   local slug_map = {
     python = "python~3.12",
@@ -29,8 +29,8 @@ local function open_devdocs(query)
 end
 
 -- 2. The Keybinding: <leader>h
-vim.keymap.set("n", "<leader>h", function() 
-  open_devdocs() 
+vim.keymap.set("n", "<leader>h", function()
+  open_devdocs()
 end, { desc = "DevDocs: Jump to browser" })
 
 -- 3. The Command: :Fdd (Renamed to remove underscore)
