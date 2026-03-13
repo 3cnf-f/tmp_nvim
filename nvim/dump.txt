@@ -1,0 +1,1165 @@
+
+---------------- ./lua/config/keymaps.lua ----------------
+vim.keymap.set("n","-","<cmd>Oil --float<CR>",{desc="Open parent directory in Oil"})
+vim.keymap.set("n", "<leader>tr", ":ToggleRelativeNumber<CR>", { silent = true })
+
+local keymap = vim.keymap -- for conciseness
+local km = vim.keymap
+
+keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+
+-- increment/decrement numbers
+keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
+keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
+-- window management
+keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
+keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
+keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
+keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+
+keymap.set("n", "<leader>to", function() vim.cmd("tabnew") end, { desc = "Open new tab" }) -- open new tab
+keymap.set("n", "<leader>tx", function() vim.cmd("tabclose") end, { desc = "Close tab" }) -- open new tab
+keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
+keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
+keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+km.set("n", "<leader>p", require("fzf-lua").files, { desc = "FZF Files" })
+
+km.set("n", "<leader><leader>", require("fzf-lua").resume, { desc = "FZF Resume" })
+
+km.set("n", "<leader>r", require("fzf-lua").registers, { desc = "Registers" })
+vim.keymap.set("n", "<leader>RT", "<cmd>FTmuxRun<CR>", { desc = "Run This File" })                                                                                                                                                                          
+vim.keymap.set("n", "<leader>RM", "<cmd>FTmuxRunRoot<CR>", { desc = "Run Root main.py" })                                                                                                                                                                   
+vim.keymap.set("n", "<leader>RA", "<cmd>FTmuxRunRoot /interface/app.py<CR>", { desc = "Run Root app.py" })
+
+km.set("n", "<leader>m", require("fzf-lua").marks, { desc = "Marks" })
+
+km.set("n", "<leader>k", require("fzf-lua").keymaps, { desc = "Keymaps" })
+
+km.set("n", "<leader>f", require("fzf-lua").live_grep, { desc = "FZF Grep" })
+
+km.set("n", "<leader>b", require("fzf-lua").buffers, { desc = "FZF Buffers" })
+
+km.set("v", "<leader>8", require("fzf-lua").grep_visual, { desc = "FZF Selection" })
+
+km.set("n", "<leader>7", require("fzf-lua").grep_cword, { desc = "FZF Word" })
+
+km.set("n", "<leader>j", require("fzf-lua").helptags, { desc = "Help Tags" })
+
+km.set("n", "<leader>gc", require("fzf-lua").git_bcommits, { desc = "Browse File Commits" })
+
+km.set("n", "<leader>gs", require("fzf-lua").git_status, { desc = "Git Status" })
+
+km.set("n", "<leader>s", require("fzf-lua").spell_suggest, { desc = "Spelling Suggestions" })
+
+
+km.set("n", "<leader>cj", require("fzf-lua").lsp_definitions, { desc = "Jump to Definition" })
+
+km.set(
+  "n",
+  "<leader>cs",
+  ":lua require'fzf-lua'.lsp_document_symbols({winopts = {preview={wrap='wrap'}}})<cr>",
+  { desc = "Document Symbols" }
+)
+
+km.set("n", "<leader>cr", require("fzf-lua").lsp_references, { desc = "LSP References" })
+
+km.set(
+  "n",
+  "<leader>cd",
+  ":lua require'fzf-lua'.diagnostics_document({fzf_opts = { ['--wrap'] = true }})<cr>",
+  { desc = "Document Diagnostics" }
+)
+-- === PANE NAVIGATION (Alt-Arrows) ===
+-- Jump between windows in Normal Mode
+vim.keymap.set("n", "<M-Left>", "<C-w>h", { desc = "Go to Left Window" })
+vim.keymap.set("n", "<M-Down>", "<C-w>j", { desc = "Go to Lower Window" })
+vim.keymap.set("n", "<M-Up>", "<C-w>k", { desc = "Go to Upper Window" })
+vim.keymap.set("n", "<M-Right>", "<C-w>l", { desc = "Go to Right Window" })
+
+km.set(
+  "n",
+  "<leader>ca",
+  
+  ":lua require'fzf-lua'.lsp_code_actions({ winopts = {relative='cursor',row=1.01, col=0, height=0.2, width=0.4} })<cr>",
+  { desc = "Code Actions" }
+)
+-- "Code Peek": Force FZF to open so you can see the preview pane
+-- even if there is only one definition found.
+vim.keymap.set("n", "<leader>cp", function()
+  require('fzf-lua').lsp_definitions({
+    jump1 = false,       -- CHANGED: 'jump_to_single_result' is now 'jump1'
+    winopts = {
+      preview = {
+        layout = 'vertical',
+        vertical = 'up:60%'
+      }
+    }
+  })
+end, { desc = "Peek Definition" })
+-- cmp keymaps  
+-- vim.keymap.set("i", "<A-Space>", function() cmp.complete() end, { expr = true, silent = true })
+
+local neocodeium = require("neocodeium")
+
+vim.keymap.set("i", "<A-l>", neocodeium.accept)
+vim.keymap.set("i", "<A-j>", function() require("neocodeium").cycle_or_complete() end)
+vim.keymap.set("i", "<A-k>", function() require("neocodeium").cycle_or_complete(-1) end)
+vim.keymap.set("i", "<A-h>", neocodeium.clear)
+vim.keymap.set("i", "<A-c>", neocodeium.cycle_or_complete)
+vim.keymap.set("i", "<A-ö>", neocodeium.accept_word, { desc = "AI: Accept Word" })
+vim.keymap.set("i", "<A-ä>", neocodeium.accept_line, { desc = "AI: Accept Line" })
+
+-- ============================================================================
+-- "DANK" CLIPBOARD OPERATOR (Alt-y)
+-- Usage:
+--  <A-y> + motion  -> Copy motion to System Clipboard (e.g., <A-y>iw, <A-y>$)
+--  <A-y><A-y>      -> Copy whole line to System Clipboard
+--  <A-Y>           -> Copy from cursor to end of line to System Clipboard
+-- ============================================================================
+
+-- 1. The Operator: Maps Alt-y to the system register yank ("+y)
+-- This works with Flash, Treesitter, and standard motions.
+vim.keymap.set({'n', 'x'}, '<M-y>', '"+y', { desc = 'Dank (System Copy)' })
+
+-- 2. The Line Double-Tap: Maps Alt-y in "Operator Pending" mode to the line motion (_)
+-- This makes pressing Alt-y twice work exactly like 'yy'
+vim.keymap.set('o', '<M-y>', '_', { desc = 'Dank Line Motion' })
+
+-- 3. The End-of-Line Shortcut: Alt-Shift-Y
+vim.keymap.set('n', '<M-Y>', '"+y$', { desc = 'Dank to End of Line' })
+
+---------------- ./lua/config/commands.lua ----------------
+-- vim.cmd([[
+--   command! ToggleRelativeNumber lua vim.opt.relativenumber = not vim.opt.relativenumber
+-- ]])
+vim.api.nvim_create_user_command('ToggleRelativeNumber', function()
+  vim.wo.relativenumber = not vim.wo.relativenumber
+end, {})
+
+---------------- ./lua/config/options.lua ----------------
+vim.opt.number=true
+-- look at  kickstarter.lua options for examples of well commented options
+-- https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.list = true
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+---
+vim.opt.expandtab = true -- Convert tabs to spaces
+vim.opt.shiftwidth = 4 -- Amount to indent with << and >>
+vim.opt.tabstop = 4 -- How many spaces are shown per Tab
+vim.opt.softtabstop = 4 -- How many spaces are applied when pressing Tab
+
+vim.opt.smarttab = true
+vim.opt.smartindent = true
+vim.opt.autoindent = true -- Keep identation from previous line
+vim.opt.undofile = true
+vim.opt.cursorline = true
+-- Enable break indent
+vim.opt.breakindent = true
+vim.opt.signcolumn = "yes"
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+vim.opt.scrolloff = 5
+vim.opt.cmdheight = 1
+vim.opt.number = true
+vim.opt.fillchars:append({ vert = "│", eob = " " })
+
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+  },
+  -- We DELETE the 'paste' section here. 
+  -- Why? Because reading clipboard via escape codes is blocked by terminals.
+  -- Use Ctrl+Shift+V to paste from system clipboard instead.
+  paste = {
+    ['+'] = function() return {} end,
+    ['*'] = function() return {} end,
+  },
+}
+
+---------------- ./lua/config/lazy.lua ----------------
+-- Bootstrap lazy.nvim
+-- look at  kickstarter.lua options for examples of well commented options
+--  FANTASTIC :
+-- https://github.com/josean-dev/dev-environment-files/tree/main/.config/nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Make sure to setup `mapleader` and `maplocalleader` before
+-- loading lazy.nvim so that mappings are correct.
+-- This is also a good place to setup other settings (vim.opt)
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+--- my added options  START
+vim.opt.showmode= false
+require("config.options")
+require("config.commands")
+
+--- my added options  START
+
+-- Setup lazy.nvim
+require("lazy").setup({
+  spec = {
+    -- import your plugins
+    { import = "plugins" },
+  },
+  -- Configure any other settings here. See the documentation for more details.
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { "kanagawa" } },
+  -- automatically check for plugin updates
+  checker = { enabled = true },
+})
+--- my added options  START
+require("config.keymaps")
+--- my added options  END
+
+---------------- ./lua/plugins/minicomment.lua ----------------
+return {
+  "echasnovski/mini.comment",
+  version = false, -- Recommended for 'mini' plugins to use main branch
+  dependencies = { 
+    -- Integrates with your existing Treesitter text objects
+    "nvim-treesitter/nvim-treesitter-textobjects", 
+  },
+  opts = {
+    -- Options
+    options = {
+      custom_commentstring = nil, -- Uses nvim-ts-context-commentstring if installed
+      ignore_blank_line = false,  -- Allow commenting blank lines
+      start_of_line = false,      -- Place comment at indentation, not start of line
+      pad_comment_parts = true,   -- Add space after comment symbol (e.g., "# Text")
+    },
+    
+    -- Mappings (Standard Vim)
+    mappings = {
+      comment = "gc",      -- Operator-pending (e.g., 'gc' + 'af' = Comment Around Function)
+      comment_line = "gcc", -- Comment current line
+      comment_visual = "gc", -- Comment selection in visual mode
+      textobject = "gc",   -- Text object for "comment" (e.g., 'dgc' deletes a comment)
+    },
+  },
+}
+
+---------------- ./lua/plugins/oilfilemanager.lua ----------------
+return {
+  'stevearc/oil.nvim',
+  opts = {
+    show_hidden = true,
+    keymaps = {
+      ["g?"] = "actions.show_help",
+      ["<CR>"] = "actions.select",
+      ["<C-s>"] = "actions.select_vsplit",
+      ["<C-h>"] = "actions.select_split",
+      ["<C-t>"] = "actions.select_tab",
+      ["<C-p>"] = "actions.preview",
+      ["<C-c>"] = "actions.close",
+      ["<C-l>"] = "actions.refresh",
+      ["-"] = "actions.parent",
+      ["_"] = "actions.open_cwd",
+      ["`"] = "actions.cd",
+      ["~"] = "actions.tcd",
+      ["gs"] = "actions.change_sort",
+      ["gx"] = "actions.open_external",
+      ["g."] = "actions.toggle_hidden",
+      
+      -- === CUSTOM DADBOD ACTION (Variables Method) ===
+      ["<leader>db"] = {
+        desc = "Add SQLite file to Dadbod UI",
+        callback = function()
+          local oil = require("oil")
+          local entry = oil.get_cursor_entry()
+          local dir = oil.get_current_dir()
+          
+          if not entry or entry.type ~= "file" then 
+            vim.notify("Cursor is not on a file.", vim.log.levels.WARN)
+            return 
+          end
+          
+          local full_path = dir .. entry.name
+          local connection_url = "sqlite:" .. full_path
+          
+          -- 1. Get existing connections or initialize empty table
+          -- We use deepcopy to avoid reference issues with vim.g
+          local dbs = {}
+          if vim.g.dbs then
+            dbs = vim.deepcopy(vim.g.dbs)
+          end
+          
+          -- 2. Add the new connection silently
+          table.insert(dbs, { name = entry.name, url = connection_url })
+          
+          -- 3. Save back to global variable
+          vim.g.dbs = dbs
+          
+          -- 4. Force load the plugin and refresh the UI
+          require("lazy").load({ plugins = { "vim-dadbod-ui" } })
+          vim.cmd("DBUI")
+          
+          vim.notify("Added DB: " .. entry.name, vim.log.levels.INFO)
+        end,
+      },
+    },
+    use_default_keymaps = true,
+  },
+  dependencies = { { "echasnovski/mini.icons", opts = {} } },
+  lazy = false,
+}
+
+---------------- ./lua/plugins/lualine.lua ----------------
+return {
+  "nvim-lualine/lualine.nvim",
+  dependencies = { "nvim-tree/nvim-web-devicons" }, -- Required for file icons
+  config = function()
+    require("lualine").setup({
+      options = {
+        icons_enabled = true, -- Enable Nerd Fonts icons
+        theme = "everforest", -- Auto-detects your colorscheme (or change to 'tokyonight', 'gruvbox', etc.)
+        component_separators = { left = "", right = "" }, -- Nerd Font separators for a sleek look
+        section_separators = { left = "", right = "" },
+        disabled_filetypes = { -- Hide statusline in these filetypes if needed
+          statusline = {},
+          winbar = {},
+        },
+        ignore_focus = {},
+        always_divide_middle = true,
+        globalstatus = true, -- Set to true if you want a single statusline for all windows
+        refresh = {
+          statusline = 1000,
+          tabline = 1000,
+          winbar = 1000,
+        },
+      },
+      sections = {
+        lualine_a = { "mode" }, -- Current mode (e.g., NORMAL with icon)
+        lualine_b = { "branch", "diff", "diagnostics" }, -- Git branch, diff status, LSP diagnostics
+        lualine_c = { "filename" }, -- File name with path if modified
+        lualine_x = { "encoding", "fileformat", "filetype" }, -- Encoding, line endings, file type with icon
+        lualine_y = { "progress" }, -- % progress in file
+        lualine_z = { "location" }, -- Line:column position
+      },
+      inactive_sections = { -- Dimmed sections for inactive windows
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = { "filename" },
+        lualine_x = { "location" },
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {}, -- Optional: Customize tabline if needed
+      winbar = {}, -- Optional: Winbar (top bar) setup
+      inactive_winbar = {},
+      extensions = {}, -- Add extensions like 'fugitive' for Git, 'nvim-tree', etc.
+    })
+  end,
+}
+
+---------------- ./lua/plugins/nvimsurround.lua ----------------
+return  {  "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+        require("nvim-surround").setup({
+            -- Configuration here, or leave empty to use defaults
+        })
+    end
+}
+
+---------------- ./lua/plugins/cmp.lua ----------------
+return {
+  "hrsh7th/nvim-cmp",
+  dependencies = {
+    "hrsh7th/cmp-nvim-lsp", -- Required to talk to Jedi/Python
+    "hrsh7th/cmp-buffer",   -- Optional: suggests words found in the current file
+    "hrsh7th/cmp-path",     -- Optional: suggests file paths
+  },
+  config = function()
+    local cmp = require("cmp")
+    cmp.setup({
+      -- 1. Key Mappings
+      mapping = cmp.mapping.preset.insert({
+        ["<C-Space>"] = cmp.mapping.complete(), -- CTRL+SPACE to force open menu
+        ["<CR>"] = cmp.mapping.confirm({ select = true }), -- ENTER to confirm
+        ["<Tab>"] = cmp.mapping.select_next_item(), -- TAB to go down
+        ["<S-Tab>"] = cmp.mapping.select_prev_item(), -- SHIFT+TAB to go up
+      }),
+      
+      -- 2. Sources (Order matters: top is higher priority)
+      sources = cmp.config.sources({
+        { name = "nvim_lsp" }, -- This enables 'bot.' completion
+        { name = "codeium" },
+        { name = "buffer" },
+        { name = "path" },
+      }),
+    })
+  end
+}
+
+---------------- ./lua/plugins/dap.lua ----------------
+return {
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      "rcarriga/nvim-dap-ui",
+      "nvim-neotest/nvim-nio",
+      "mfussenegger/nvim-dap-python",
+      "theHamsta/nvim-dap-virtual-text",
+    },
+    config = function()
+      local dap = require("dap")
+      local dapui = require("dapui")
+      
+      require("nvim-dap-virtual-text").setup({
+        enabled = true,
+        enabled_commands = true,
+        highlight_changed_variables = true,
+        show_stop_reason = true,
+        commented = false,
+        only_first_definition = true,
+        virt_text_pos = 'eol',
+      })
+      
+      dapui.setup({
+        layouts = {
+          {
+            elements = {
+              { id = "scopes", size = 0.25 },
+              { id = "breakpoints", size = 0.25 },
+              { id = "stacks", size = 0.25 },
+              { id = "watches", size = 0.25 },
+            },
+            size = 40,
+            position = "left",
+          },
+          {
+            elements = {
+              { id = "repl", size = 0.5 },
+              { id = "console", size = 0.5 },
+            },
+            size = 10,
+            position = "bottom",
+          },
+        },
+      })
+      
+      local function get_python_path()
+        local venv = os.getenv("VIRTUAL_ENV")
+        if venv then
+          return venv .. "/bin/python"
+        end
+        return vim.fn.exepath("python3") or vim.fn.exepath("python")
+      end
+      
+      require("dap-python").setup(get_python_path())
+      
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+      
+      local map = vim.keymap.set
+      local opts = { noremap = true, silent = true }
+      
+      -- === Core Debug Controls (å) ===
+      map("n", "åc", dap.continue, vim.tbl_extend("force", opts, { desc = "DAP: Continue/Start" }))
+      map("n", "å1", dap.step_over, vim.tbl_extend("force", opts, { desc = "DAP: Step over" }))
+      map("n", "åi", dap.step_into, vim.tbl_extend("force", opts, { desc = "DAP: Step into" }))
+      map("n", "åo", dap.step_out, vim.tbl_extend("force", opts, { desc = "DAP: Step out" }))
+      map("n", "åb", dap.toggle_breakpoint, vim.tbl_extend("force", opts, { desc = "DAP: Toggle Breakpoint" }))
+      map("n", "åB", function()
+        dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Conditional Breakpoint" }))
+      
+      -- === UI and Internal REPL ===
+      map("n", "år", dap.repl.open, vim.tbl_extend("force", opts, { desc = "DAP: Open Debug Console" }))
+      map("n", "åu", dapui.toggle, vim.tbl_extend("force", opts, { desc = "DAP: Toggle UI" }))
+      
+      -- === Session Control ===
+      map("n", "åx", function()
+        dap.terminate()
+        dapui.close()
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Terminate" }))
+      
+      map("n", "åR", function()
+        dap.terminate()
+        vim.defer_fn(function() dap.continue() end, 100)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Restart Session" }))
+      
+      -- === Inspect and Evaluate ===
+      map("n", "åh", function()
+        require('dap.ui.widgets').hover()
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Hover Info" }))
+      
+      map("n", "åe", function()
+        vim.ui.input({ prompt = "Expression: " }, function(expr)
+          if expr then require('dap').repl.execute(expr) end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Eval Expression" }))
+      
+      map("v", "åe", function()
+        local start_pos = vim.fn.getpos("'<")
+        local end_pos = vim.fn.getpos("'>")
+        local lines = vim.api.nvim_buf_get_lines(0, start_pos[2]-1, end_pos[2], false)
+        local expr = table.concat(lines, "\n")
+        require('dap').repl.execute(expr)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Eval Selection" }))
+            
+      map("n", "åV", function()
+        require("nvim-dap-virtual-text").toggle()
+      end, { desc = "DAP: Toggle Virtual Text" })
+      
+      -- === Watches ===
+      map("n", "åw", function()
+        local word = vim.fn.expand('<cword>')
+        vim.ui.input({ prompt = "Watch expression: ", default = word }, function(expr)
+          if expr then
+            require('dap.ui').elements.watches.add(expr)
+            vim.notify("Added watch: " .. expr)
+          end
+        end)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Add Watch" }))
+      
+      -- === Floating Views ===
+      map("n", "åv", function() dapui.float_element("scopes", { enter = true }) end, 
+        vim.tbl_extend("force", opts, { desc = "DAP: Float Scopes" }))
+      
+      map("n", "åW", function() dapui.float_element("watches", { enter = true }) end, 
+        vim.tbl_extend("force", opts, { desc = "DAP: Float Watches" }))
+      
+      map("n", "åS", function() dapui.float_element("stacks", { enter = true }) end, 
+        vim.tbl_extend("force", opts, { desc = "DAP: Float Stack" }))
+      
+      -- === DATA DUMPING (Export Variables) ===
+      -- åd... = dump variable
+      map("n", "ådf", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format("import pprint; open('%s','w').write(pprint.pformat(%s))", filepath, word)
+        require('dap').repl.execute(cmd)
+        vim.notify("Dumped " .. word .. " to " .. filepath)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Dump Var to File" }))
+      
+      map("n", "åds", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format("import pprint; open('%s','w').write(pprint.pformat(%s))", filepath, word)
+        require('dap').repl.execute(cmd)
+        vim.defer_fn(function() vim.cmd("vsplit " .. filepath) end, 200)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Dump Var to Split" }))
+
+      map("n", "ådt", function()
+        local word = vim.fn.expand('<cword>')
+        local filepath = "/tmp/dump_" .. word .. ".txt"
+        local cmd = string.format("import pprint; open('%s','w').write(pprint.pformat(%s))", filepath, word)
+        require('dap').repl.execute(cmd)
+        vim.defer_fn(function() vim.cmd("tabnew " .. filepath) end, 200)
+      end, vim.tbl_extend("force", opts, { desc = "DAP: Dump Var to Tab" }))
+    end,
+  },
+}
+
+---------------- ./lua/plugins/treesitter.lua ----------------
+return {
+  "nvim-treesitter/nvim-treesitter",
+  branch = "master", -- <--- FORCE STABLE LEGACY BRANCH
+  build = ":TSUpdate",
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+  },
+  config = function()
+    require("nvim-treesitter.configs").setup({
+      -- Languages to install
+      ensure_installed = { "python", "lua", "markdown", "vim", "bash" },
+      
+      -- Enable highlighting
+      highlight = { enable = true },
+      
+      -- Enable better indentation
+      indent = { enable = true },
+      
+      -- Enable textobjects
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true,
+          keymaps = {
+            -- Functions
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            
+            -- Classes
+            ["ac"] = "@class.outer",
+            ["ic"] = "@class.inner",
+            
+            -- Parameters
+            ["ia"] = "@parameter.inner",
+            ["aa"] = "@parameter.outer",
+            
+            -- Loops
+            ["al"] = "@loop.outer",
+            ["il"] = "@loop.inner",
+            
+            -- Conditionals
+            ["ai"] = "@conditional.outer",
+            ["ii"] = "@conditional.inner",
+          },
+        },
+        
+        move = {
+          enable = true,
+          set_jumps = true,
+          goto_next_start = {
+            ["]f"] = "@function.outer",
+            ["]c"] = "@class.outer",
+            ["]l"] = "@loop.outer",
+            ["]i"] = "@conditional.outer",
+          },
+          goto_previous_start = {
+            ["[f"] = "@function.outer",
+            ["[c"] = "@class.outer",
+            ["[l"] = "@loop.outer",
+            ["[i"] = "@conditional.outer",
+          },
+        },
+      },
+    })
+    
+    -- ö prefix: Movement (Swedish keyboard friendly)
+    local opts = { noremap = true, silent = true }
+    
+    -- Functions
+    vim.keymap.set("n", "ön", "]f", { remap = true, desc = "Next function" })
+    vim.keymap.set("n", "öp", "[f", { remap = true, desc = "Previous function" })
+    
+    -- Classes
+    vim.keymap.set("n", "öc", "]c", { remap = true, desc = "Next class" })
+    vim.keymap.set("n", "öC", "[c", { remap = true, desc = "Previous class" })
+    
+    -- Loops
+    vim.keymap.set("n", "öl", "]l", { remap = true, desc = "Next loop" })
+    vim.keymap.set("n", "öL", "[l", { remap = true, desc = "Previous loop" })
+    
+    -- Conditionals
+    vim.keymap.set("n", "öi", "]i", { remap = true, desc = "Next if/else" })
+    vim.keymap.set("n", "öI", "[i", { remap = true, desc = "Previous if/else" })
+    
+    -- Paragraphs (replaces { })
+    vim.keymap.set("n", "öf", "}", { desc = "Next paragraph" })
+    vim.keymap.set("n", "öb", "{", { desc = "Previous paragraph" })
+  end,
+}
+
+---------------- ./lua/plugins/sleuthdetectnfixindents.lua ----------------
+return {
+	"tpope/vim-sleuth",
+	-- No further initialization needed, as this is a real "vim" not a lua
+	-- plugin.
+}
+
+---------------- ./lua/plugins/lsp-jedi.lua ----------------
+return {
+  "neovim/nvim-lspconfig",
+  config = function()
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        -- Base options used for all mappings
+        local opts = { buffer = args.buf, noremap = true, silent = true }
+        
+        -- Helper function to merge 'desc' with the base 'opts'
+        local function map(keys, func, desc)
+          vim.keymap.set("n", keys, func, vim.tbl_extend("force", opts, { desc = desc }))
+        end
+
+        -- Core navigation (now with descriptions)
+        map("gd", require("fzf-lua").lsp_definitions, "Go to Definition")
+        map("gr", require("fzf-lua").lsp_references, "Go to References")
+        map("K", vim.lsp.buf.hover, "Hover Documentation")
+        map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+        
+        vim.diagnostic.config({ virtual_text = true })
+      end,
+    })
+
+    vim.lsp.config('jedi_language_server', {
+      cmd = { 'jedi-language-server' },
+      filetypes = { 'python' },
+      root_markers = { 'pyproject.toml', 'setup.py', '.git' },
+    })
+
+    vim.lsp.enable('jedi_language_server')
+  end,
+}
+
+---------------- ./lua/plugins/iron.lua ----------------
+return {
+  "Vigemus/iron.nvim",
+  event = "VeryLazy",
+  config = function()
+    local iron = require("iron.core")
+    local view = require("iron.view")
+
+    -- ==========================================
+    -- 1. STATE & CONTEXT LOGIC
+    -- ==========================================
+    local use_tmux_remote = false
+
+    -- Helper: Determine current language context
+    local function get_context()
+      local ft = vim.bo.filetype
+      -- Check first line for custom trigger
+      local first_line = vim.api.nvim_buf_get_lines(0, 0, 1, false)[1] or ""
+      local is_custom_bash = string.match(first_line, "#%-%-%-%-bash snippet%-%-")
+
+      if ft == "python" then
+        return {
+          ft = "python",
+          win_name = "ipyOut",
+          cmd = "ipython",
+          use_magic = true, -- Use %paste for IPython
+          use_venv = true
+        }
+      elseif ft == "sh" or ft == "bash" or is_custom_bash then
+        return {
+          ft = "sh",
+          win_name = "bashOut", -- Separate window for shell commands
+          cmd = "bash",
+          use_magic = false,    -- Raw paste for Bash
+          use_venv = false
+        }
+      else
+        -- Fallback default (treat as generic shell)
+        return {
+          ft = "sh",
+          win_name = "termOut",
+          cmd = "bash",
+          use_magic = false,
+          use_venv = false
+        }
+      end
+    end
+
+    -- ==========================================
+    -- 2. HELPER: TMUX UTILS
+    -- ==========================================
+    
+    -- A. Bootstrapper (Create Context-Specific Window)
+    local function bootstrap_tmux()
+      local ctx = get_context()
+      local win_name = ctx.win_name
+
+      -- Check if window exists
+      local handle = io.popen("tmux list-windows -F '#{window_name}'")
+      local result = handle:read("*a")
+      handle:close()
+
+      if string.find(result, "^" .. win_name .. "\n") or string.find(result, "\n" .. win_name .. "\n") then
+        vim.notify("⚠️  " .. win_name .. " exists. Kill it manually first.", vim.log.levels.WARN)
+        return
+      end
+
+      local cwd = vim.fn.getcwd()
+      
+      -- Spawn Window
+      vim.notify("🚀 Spawning " .. win_name .. " (" .. ctx.ft .. ") in background...", vim.log.levels.INFO)
+      vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
+      vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, "cd " .. cwd, "Enter"})
+      
+      -- Python Specific: Venv & IPython
+      if ctx.use_venv then
+        local venv = os.getenv("VIRTUAL_ENV") or ""
+        if venv == "" then
+          for _, name in ipairs({ ".venv", "venv", "env" }) do
+            if vim.fn.isdirectory(cwd .. "/" .. name) == 1 then venv = cwd .. "/" .. name break end
+          end
+        end
+        if venv ~= "" then vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, "source " .. venv .. "/bin/activate", "Enter"}) end
+      end
+
+      -- Launch Interpreter (ipython or bash)
+      vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, ctx.cmd, "Enter"})
+    end
+
+    -- B. Send Text to Tmux (Context Aware Paste)
+    local function send_to_tmux(text)
+      if text == nil or text == "" then return end
+      local ctx = get_context()
+
+      -- 1. Load text into buffer
+      vim.fn.system({"tmux", "load-buffer", "-"}, text)
+      
+      -- 2. Paste Logic
+      if ctx.use_magic then
+        -- Python/IPython: Use %paste magic
+        vim.fn.system({"tmux", "paste-buffer", "-d", "-p", "-t", ":" .. ctx.win_name})
+        -- Double Enter for IPython block completion
+        vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, "Enter", "Enter"})
+      else
+        -- Bash: Raw paste (Bracketed paste -p is usually safe/good for bash too)
+        vim.fn.system({"tmux", "paste-buffer", "-d", "-p", "-t", ":" .. ctx.win_name})
+        -- Single Enter usually enough for Bash, but extra doesn't hurt
+        vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, "Enter"})
+      end
+    end
+
+    -- C. Get Visual Selection
+    local function get_visual_selection()
+      local _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
+      local _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
+      local lines = vim.fn.getline(csrow, cerow)
+      if #lines == 0 then return "" end
+      lines[#lines] = string.sub(lines[#lines], 1, cecol)
+      lines[1] = string.sub(lines[1], cscol)
+      return table.concat(lines, "\n")
+    end
+
+    -- D. Operator Function
+    _G.tmux_send_operator = function(type)
+      local start_pos = vim.api.nvim_buf_get_mark(0, '[')
+      local end_pos = vim.api.nvim_buf_get_mark(0, ']')
+      local lines = vim.api.nvim_buf_get_lines(0, start_pos[1]-1, end_pos[1], false)
+      
+      if #lines > 0 and type == 'char' then
+         lines[#lines] = string.sub(lines[#lines], 1, end_pos[2] + 1)
+         lines[1] = string.sub(lines[1], start_pos[2] + 1)
+      end
+      send_to_tmux(table.concat(lines, "\n"))
+    end
+
+    -- ==========================================
+    -- 3. IRON SETUP (INTERNAL)
+    -- ==========================================
+    local function get_python_command()
+       local cwd = vim.fn.getcwd()
+       local venv_names = { ".venv", "venv", "env" }
+       for _, name in ipairs(venv_names) do
+         local local_ipython = cwd .. "/" .. name .. "/bin/ipython"
+         local local_python  = cwd .. "/" .. name .. "/bin/python"
+         if vim.fn.executable(local_ipython) == 1 then return { local_ipython, "--no-autoindent" }
+         elseif vim.fn.executable(local_python) == 1 then return { local_python } end
+       end
+       local global_venv = os.getenv("VIRTUAL_ENV")
+       if global_venv then
+         if vim.fn.executable(global_venv .. "/bin/ipython") == 1 then return { global_venv .. "/bin/ipython", "--no-autoindent" } end
+         return { global_venv .. "/bin/python" }
+       end
+       if vim.fn.executable("ipython") == 1 then return { "ipython", "--no-autoindent" } end
+       return { "python3" }
+    end
+
+    iron.setup({
+      config = {
+        scratch_repl = true,
+        repl_definition = { 
+            python = { command = get_python_command(), format = require("iron.fts.common").bracketed_paste },
+            -- Added 'sh' support for Internal Mode
+            sh = { command = {"bash"} } 
+        },
+        repl_open_cmd = view.split.vertical.botright(0.45),
+      },
+      highlight = { italic = true },
+      keymaps = {}, 
+      ignore_blank_lines = true, 
+    })
+
+    -- ==========================================
+    -- 4. KEYMAPS (Å Namespace)
+    -- ==========================================
+    local map = vim.keymap.set
+    local opts = { noremap = true, silent = true }
+
+    -- [TOGGLE]
+    map("n", "Åä", function()
+        use_tmux_remote = not use_tmux_remote
+        local ctx = get_context()
+        local dest = use_tmux_remote and ("📡 External ("..ctx.win_name..")") or "💻 Internal (Iron)"
+        print("Target: " .. dest)
+    end, vim.tbl_extend("force", opts, { desc = "Toggle Iron/Tmux Target" }))
+
+    -- [INITIATE]
+    map("n", "Åt", function()
+      if use_tmux_remote then bootstrap_tmux() else vim.cmd("IronRepl") end
+    end, vim.tbl_extend("force", opts, { desc = "Toggle REPL / Create Tmux" }))
+
+    -- [SEND LINE]
+    map("n", "Åss", function() 
+      if use_tmux_remote then send_to_tmux(vim.api.nvim_get_current_line()) else require("iron.core").send_line() end
+    end, vim.tbl_extend("force", opts, { desc = "Send Line (Context Aware)" }))
+
+    -- [SEND FILE]
+    map("n", "Åsf", function()
+      if use_tmux_remote then 
+        local whole_file = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+        send_to_tmux(whole_file)
+      else 
+        require("iron.core").send_file() 
+      end
+    end, vim.tbl_extend("force", opts, { desc = "Send File (Context Aware)" }))
+
+    -- [SEND MOTION] (Operator)
+    map("n", "Ås", function()
+      if use_tmux_remote then
+        vim.go.operatorfunc = "v:lua.tmux_send_operator"
+        return "g@"
+      else
+        return "<cmd>lua require('iron.core').run_motion('send_motion')<CR>"
+      end
+    end, vim.tbl_extend("force", opts, { expr = true, desc = "Send Motion (Context Aware)" }))
+
+    -- [SEND VISUAL]
+    map("x", "Ås", function()
+      if use_tmux_remote then
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'x', false)
+        vim.schedule(function() send_to_tmux(get_visual_selection()) end)
+      else
+        require("iron.core").visual_send()
+      end
+    end, vim.tbl_extend("force", opts, { desc = "Send Selection (Context Aware)" }))
+
+    -- [SEND BLOCK] (Paragraph)
+    map("n", "Åsb", function()
+      if use_tmux_remote then
+        vim.cmd("normal! vip")
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'x', false)
+        vim.schedule(function() send_to_tmux(get_visual_selection()) end)
+      else
+        vim.cmd("normal! vip")
+        require('iron.core').visual_send()
+      end
+    end, vim.tbl_extend("force", opts, { desc = "Send Block (Context Aware)" }))
+
+
+    -- Standard Iron Management (Internal Only)
+    map("n", "År", "<cmd>IronRestart<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Restart Kernel" }))
+    map("n", "Åf", "<cmd>IronFocus<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Focus REPL" }))
+    map("n", "Åh", "<cmd>IronHide<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Hide UI" }))
+    map("n", "Åc", function() require("iron.core").send(nil, string.char(12)) end, vim.tbl_extend("force", opts, { desc = "Iron: Clear Screen" }))
+
+    -- Terminal Nav
+    map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = "Iron: Exit Term Mode" })
+    map('t', '<M-Left>',  '<C-\\><C-n><C-w>h', { desc = "Jump Left" })
+    map('t', '<M-Down>',  '<C-\\><C-n><C-w>j', { desc = "Jump Down" })
+    map('t', '<M-Up>',    '<C-\\><C-n><C-w>k', { desc = "Jump Up" })
+    map('t', '<M-Right>', '<C-\\><C-n><C-w>l', { desc = "Jump Right" })
+  end,
+}
+
+---------------- ./lua/plugins/dadbod.lua ----------------
+return {
+  "kristijanhusak/vim-dadbod-ui",
+  dependencies = {
+    { "tpope/vim-dadbod", lazy = true },
+    { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+  },
+  cmd = {
+    "DBUI",
+    "DBUIToggle",
+    "DBUIAddConnection",
+    "DBUIFindBuffer",
+  },
+  init = function()
+    -- UI Settings
+    vim.g.db_ui_use_nerd_fonts = 1
+    vim.g.db_ui_show_database_icon = 1
+    vim.g.db_ui_execute_on_save = 0
+  end,
+  keys = {
+    -- Keymap to open the DB UI drawer
+    { "<leader>D", "<cmd>DBUIToggle<CR>", desc = "Toggle Database UI" },
+  },
+  config = function()
+    -- Autocomplete setup for SQL files
+    local require_ok, cmp = pcall(require, "cmp")
+    if require_ok then
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "sql", "mysql", "plsql" },
+        callback = function()
+          cmp.setup.buffer({
+            sources = {
+              { name = "vim-dadbod-completion" },
+              { name = "buffer" },
+            },
+          })
+        end,
+      })
+    end
+  end,
+}
+
+---------------- ./lua/plugins/iswap.lua ----------------
+return {                                                                                                                                           
+  "mizlan/iswap.nvim",                                                                                                                             
+  event = "VeryLazy",                                                                                                                              
+  opts = {                                                                                                                                         
+    -- Highlight colors (using your Kanagawa/Everforest theme logic implicitly)                                                                    
+    hl_snipe = "ErrorMsg",  -- The item you are currently holding                                                                                  
+    hl_selection = "Visual", -- The item you want to swap with                                                                                     
+    flash_style = "simultaneous",                                                                                                                  
+  },                                                                                                                                               
+  keys = {                                                                                                                                         
+    -- 'cx' to pick an item, then pick a destination to swap                                                                                       
+    { "cx", "<cmd>ISwap<CR>", desc = "Swap Arguments/Items" },                                                                                     
+    -- 'cX' to swap the item under cursor with a specific target immediately                                                                       
+    { "cX", "<cmd>ISwapWith<CR>", desc = "Swap Current With..." },                                                                                 
+  },                                                                                                                                               
+}                                                         
+
+---------------- ./lua/plugins/kanagawa.lua ----------------
+return {
+	"rebelot/kanagawa.nvim",
+	config = function()
+		require('kanagawa').setup({
+			compile = true,
+			overrides = function(colors)
+				return {
+					-- "WinSeparator" controls the vertical split line color.
+					-- We set it to 'fujiGray' (light grey) to make it visible.
+					WinSeparator = { fg = colors.palette.fujiGray },
+				}
+			end,
+		});
+		vim.cmd("colorscheme kanagawa");
+	end,
+	build = function()
+		vim.cmd("KanagawaCompile");
+	end,
+}
+
+---------------- ./lua/plugins/flash.lua ----------------
+return {
+  "folke/flash.nvim",
+  event = "VeryLazy",
+  ---@type Flash.Config
+  opts = {},
+  keys = {
+    -- 1. Disable default 's' mappings so nvim-surround works perfectly
+    { "s", mode = { "n", "x", "o" }, false },
+    { "S", mode = { "n", "x", "o" }, false },
+
+    -- 2. Map 'ä' to Flash Jump (Normal, Visual, and Operator modes)
+    --    Usage: 'ä' to jump, 'dä' to delete-to-jump, 'yä' to yank-to-jump
+    { "ä", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+
+    -- 3. Map 'Ä' (Shift+ä) to Flash Treesitter
+    --    Usage: 'Ä' to select a function/class/loop
+    { "Ä", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+
+    -- 4. Keep existing standard mappings for remote and toggle
+    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+  },
+}
+
+---------------- ./lua/plugins/devdocs_browser.lua ----------------
+-- File: lua/plugins/devdocs_browser.lua
+
+-- 1. The Logic
+local function open_devdocs(query)
+  local ft = vim.bo.filetype
+  local word = query or vim.fn.expand("<cword>")
+  
+  -- Map your common Neovim filetypes to DevDocs slugs
+  local slug_map = {
+    python = "python~3.12",
+    lua = "lua~5.4",
+    bash = "bash",
+    markdown = "markdown",
+  }
+
+  local slug = slug_map[ft] or ft
+  local url = "https://devdocs.io/" .. slug .. "/#q=" .. word
+
+  -- Use built-in open for Neovim 0.10+
+  if vim.ui.open then
+    vim.ui.open(url)
+  else
+    local cmd
+    if vim.fn.has("mac") == 1 then cmd = { "open", url }
+    elseif vim.fn.has("unix") == 1 then cmd = { "xdg-open", url }
+    else cmd = { "explorer", url } end
+    vim.fn.jobstart(cmd, { detach = true })
+  end
+end
+
+-- 2. The Keybinding: <leader>h
+vim.keymap.set("n", "<leader>h", function() 
+  open_devdocs() 
+end, { desc = "DevDocs: Jump to browser" })
+
+-- 3. The Command: :Fdd (Renamed to remove underscore)
+vim.api.nvim_create_user_command("Fdd", function(opts)
+  open_devdocs(opts.args)
+end, { nargs = 1, desc = "Search DevDocs in browser" })
+
+-- Return an empty table so lazy.nvim doesn't error out
+return {}
+
+---------------- ./lua/plugins/f-tmux-python-run.lua ----------------
+return {                                                                                                                                                                                                                                                    
+    {                                                                                                                                                                                                                                                       
+        "3cnf-f/f_tmux_panetitle.nvim",                                                                                                                                                                                                                     
+        config = function()                                                                                                                                                                                                                                 
+            require("f_tmux_panetitle").setup()                                                                                                                                                                                                             
+        end,                                                                                                                                                                                                                                                
+    }                                                                                                                                                                                                                                                       
+}
+
+---------------- ./lua/plugins/ministatusline.lua ----------------
+return { 'echasnovski/mini.statusline', version = false , opts = {} }
+
+---------------- ./lua/plugins/fzf.lua ----------------
+ return {
+    "ibhagwan/fzf-lua",
+    -- optional for icon support
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+	opts = {}
+  }
+
+---------------- ./lua/plugins/which-key.lua ----------------
+return {
+  "folke/which-key.nvim",
+  event = "VeryLazy",
+  init = function()
+    vim.o.timeout = true
+    vim.o.timeoutlen = 500
+  end,
+  opts = {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  },
+}
+
+---------------- ./lua/plugins/neocodium.lua ----------------
+-- add this to the file where you setup your other plugins:
+return {
+{
+  "monkoose/neocodeium",
+  event = "VeryLazy",
+  config = function()
+    local neocodeium = require("neocodeium")
+    neocodeium.setup()
+    vim.keymap.set("i", "<A-f>", neocodeium.accept)
+  end,
+}
+}
+
+---------------- ./init.lua ----------------
+require("config.lazy")

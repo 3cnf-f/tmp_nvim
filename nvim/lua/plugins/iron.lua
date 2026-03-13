@@ -1,5 +1,3 @@
-if vim.g.is_windows then return {} end
-
 return {
   "Vigemus/iron.nvim",
   event = "VeryLazy",
@@ -27,6 +25,14 @@ return {
           use_magic = true, -- Use %paste for IPython
           use_venv = true
         }
+      elseif ft == "rust" then
+        return {
+          ft = "rust",
+          win_name = "rustRepl",
+          cmd = "evcxr",    -- The Rust REPL command
+          use_magic = false,-- Rust REPL doesn't use magic commands like %paste
+          use_venv = false
+        }
       elseif ft == "sh" or ft == "bash" or is_custom_bash then
         return {
           ft = "sh",
@@ -50,33 +56,7 @@ return {
     -- ==========================================
     -- 2. HELPER: TMUX UTILS
     -- ==========================================
-
-    -- Function to spawn the Nvim Socket Server with automatic cleanup
-    local function spawn_nvim_server()
-      local win_name = "nvimServer"
-      local socket_path = "/tmp/nvimsocket"
-
-      -- Check if window exists
-      local handle = io.popen("tmux list-windows -F '#{window_name}'")
-      local result = handle:read("*a")
-      handle:close()
-
-      if string.find(result, "^" .. win_name .. "\n") or string.find(result, "\n" .. win_name .. "\n") then
-        vim.notify("🔗 Socket server window '" .. win_name .. "' already exists.", vim.log.levels.WARN)
-        return
-      end
-
-      vim.notify("⚡ Cleaning socket and starting Nvim Server...", vim.log.levels.INFO)
-
-      -- 1. Spawn Window
-      vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
-
-      -- 2. Cleanup stale socket and start nvim
-      -- We run 'rm -f' first to ensure the socket path is available
-      local cmd = string.format("rm -f %s && nvim --listen %s", socket_path, socket_path)
-      vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, cmd, "Enter"})
-    end
-
+    
     -- A. Bootstrapper (Create Context-Specific Window)
     local function bootstrap_tmux()
       local ctx = get_context()
@@ -93,12 +73,12 @@ return {
       end
 
       local cwd = vim.fn.getcwd()
-
+      
       -- Spawn Window
       vim.notify("🚀 Spawning " .. win_name .. " (" .. ctx.ft .. ") in background...", vim.log.levels.INFO)
       vim.fn.system({"tmux", "new-window", "-d", "-n", win_name})
       vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, "cd " .. cwd, "Enter"})
-
+      
       -- Python Specific: Venv & IPython
       if ctx.use_venv then
         local venv = os.getenv("VIRTUAL_ENV") or ""
@@ -110,7 +90,7 @@ return {
         if venv ~= "" then vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, "source " .. venv .. "/bin/activate", "Enter"}) end
       end
 
-      -- Launch Interpreter (ipython or bash)
+      -- Launch Interpreter (ipython, bash, or evcxr)
       vim.fn.system({"tmux", "send-keys", "-t", ":" .. win_name, ctx.cmd, "Enter"})
     end
 
@@ -121,17 +101,16 @@ return {
 
       -- 1. Load text into buffer
       vim.fn.system({"tmux", "load-buffer", "-"}, text)
-
+      
       -- 2. Paste Logic
       if ctx.use_magic then
         -- Python/IPython: Use %paste magic
         vim.fn.system({"tmux", "paste-buffer", "-d", "-p", "-t", ":" .. ctx.win_name})
-        -- Double Enter for IPython block completion
         vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, "Enter", "Enter"})
       else
-        -- Bash: Raw paste (Bracketed paste -p is usually safe/good for bash too)
+        -- Bash / Rust: Raw paste
+        -- Rust's evcxr handles pasted blocks reasonably well
         vim.fn.system({"tmux", "paste-buffer", "-d", "-p", "-t", ":" .. ctx.win_name})
-        -- Single Enter usually enough for Bash, but extra doesn't hurt
         vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, "Enter"})
       end
     end
@@ -152,7 +131,7 @@ return {
       local start_pos = vim.api.nvim_buf_get_mark(0, '[')
       local end_pos = vim.api.nvim_buf_get_mark(0, ']')
       local lines = vim.api.nvim_buf_get_lines(0, start_pos[1]-1, end_pos[1], false)
-
+      
       if #lines > 0 and type == 'char' then
          lines[#lines] = string.sub(lines[#lines], 1, end_pos[2] + 1)
          lines[1] = string.sub(lines[1], start_pos[2] + 1)
@@ -184,29 +163,26 @@ return {
     iron.setup({
       config = {
         scratch_repl = true,
-        repl_definition = {
+        repl_definition = { 
             python = { command = get_python_command(), format = require("iron.fts.common").bracketed_paste },
-            sh = { command = {"bash"} }
+            sh = { command = {"bash"} },
+            -- ADDED RUST SUPPORT
+            rust = { command = {"evcxr"}, format = require("iron.fts.common").bracketed_paste }
         },
         repl_open_cmd = view.split.vertical.botright(0.45),
       },
       highlight = { italic = true },
-      keymaps = {},
-      ignore_blank_lines = true,
+      keymaps = {}, 
+      ignore_blank_lines = true, 
     })
 
     -- ==========================================
-    -- 4. KEYMAPS (Å/å Namespace)
+    -- 4. KEYMAPS (Å Namespace)
     -- ==========================================
     local map = vim.keymap.set
     local opts = { noremap = true, silent = true }
 
-    -- [å] mappings
-    map("n", "åt", function()
-      spawn_nvim_server()
-    end, vim.tbl_extend("force", opts, { desc = "Tmux: Start Nvim Socket Server" }))
-
-    -- [Å] mappings
+    -- [Åä] TOGGLE TARGET
     map("n", "Åä", function()
         use_tmux_remote = not use_tmux_remote
         local ctx = get_context()
@@ -214,23 +190,53 @@ return {
         print("Target: " .. dest)
     end, vim.tbl_extend("force", opts, { desc = "Toggle Iron/Tmux Target" }))
 
+    -- [Åt] INITIATE / BOOTSTRAP
     map("n", "Åt", function()
       if use_tmux_remote then bootstrap_tmux() else vim.cmd("IronRepl") end
     end, vim.tbl_extend("force", opts, { desc = "Toggle REPL / Create Tmux" }))
 
-    map("n", "Åss", function()
+    -- [Åö] RUN PROJECT (Context Aware)
+    -- Rust: runs 'cargo run'
+    -- Python: runs 'python main.py'
+    map("n", "Åö", function()
+        local ctx = get_context()
+        local cmd = ""
+        
+        if ctx.ft == "rust" then 
+            cmd = "cargo run"
+        elseif ctx.ft == "python" then 
+            cmd = "python main.py" 
+        else
+            vim.notify("Åö: No run command defined for " .. ctx.ft, vim.log.levels.WARN)
+            return
+        end
+
+        if use_tmux_remote then
+            -- Interrupt current process (Ctrl+C) then run
+            vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, "C-c", "Enter"})
+            vim.fn.system({"tmux", "send-keys", "-t", ":" .. ctx.win_name, cmd, "Enter"})
+            vim.notify("🚀 Running Project...", vim.log.levels.INFO)
+        else
+            vim.notify("Åö only configured for External Tmux mode currently.", vim.log.levels.WARN)
+        end
+    end, vim.tbl_extend("force", opts, { desc = "Run Project (Cargo/Python)" }))
+
+    -- [Åss] SEND LINE
+    map("n", "Åss", function() 
       if use_tmux_remote then send_to_tmux(vim.api.nvim_get_current_line()) else require("iron.core").send_line() end
     end, vim.tbl_extend("force", opts, { desc = "Send Line (Context Aware)" }))
 
+    -- [Åsf] SEND FILE
     map("n", "Åsf", function()
-      if use_tmux_remote then
+      if use_tmux_remote then 
         local whole_file = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
         send_to_tmux(whole_file)
-      else
-        require("iron.core").send_file()
+      else 
+        require("iron.core").send_file() 
       end
     end, vim.tbl_extend("force", opts, { desc = "Send File (Context Aware)" }))
 
+    -- [Ås] SEND MOTION
     map("n", "Ås", function()
       if use_tmux_remote then
         vim.go.operatorfunc = "v:lua.tmux_send_operator"
@@ -240,6 +246,7 @@ return {
       end
     end, vim.tbl_extend("force", opts, { expr = true, desc = "Send Motion (Context Aware)" }))
 
+    -- [Ås] SEND VISUAL
     map("x", "Ås", function()
       if use_tmux_remote then
         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), 'x', false)
@@ -249,6 +256,7 @@ return {
       end
     end, vim.tbl_extend("force", opts, { desc = "Send Selection (Context Aware)" }))
 
+    -- [Åsb] SEND BLOCK
     map("n", "Åsb", function()
       if use_tmux_remote then
         vim.cmd("normal! vip")
@@ -260,17 +268,29 @@ return {
       end
     end, vim.tbl_extend("force", opts, { desc = "Send Block (Context Aware)" }))
 
+
+    -- ==========================================
+    -- MANAGEMENT (RESTART & CLEAR)
+    -- ==========================================
+
+    -- [År] RESTART REPL
     map("n", "År", function()
       if use_tmux_remote then
         local ctx = get_context()
-        if ctx.ft == "python" then
-           local target = ":" .. ctx.win_name
-           vim.fn.system({"tmux", "send-keys", "-t", target, "quit()", "Enter"})
-           vim.fn.system({"tmux", "send-keys", "-t", target, "ipython", "Enter"})
-           vim.notify("🔄 Restarting Tmux Session (" .. ctx.win_name .. ")", vim.log.levels.INFO)
-        else
-           vim.notify("⚠️  Tmux restart is only configured for Python", vim.log.levels.WARN)
-        end
+        local target = ":" .. ctx.win_name
+        
+        -- Logic for different languages
+        local quit_cmd = "exit" -- default
+        if ctx.ft == "python" then quit_cmd = "quit()" end
+        -- Rust (evcxr) uses :quit or just Ctrl+D, but we'll try to just kill the pane command if needed
+        -- Actually, for restart, just sending the start command again usually requires exiting first.
+        
+        vim.fn.system({"tmux", "send-keys", "-t", target, "C-d", "Enter"}) -- Universal exit
+        vim.defer_fn(function() 
+             vim.fn.system({"tmux", "send-keys", "-t", target, ctx.cmd, "Enter"})
+        end, 500)
+        
+        vim.notify("🔄 Restarting Tmux Session (" .. ctx.win_name .. ")", vim.log.levels.INFO)
       else
         vim.cmd("IronRestart")
       end
@@ -280,6 +300,7 @@ return {
     map("n", "Åh", "<cmd>IronHide<CR>", vim.tbl_extend("force", opts, { desc = "Iron: Hide UI" }))
     map("n", "Åc", function() require("iron.core").send(nil, string.char(12)) end, vim.tbl_extend("force", opts, { desc = "Iron: Clear Screen" }))
 
+    -- Terminal Nav
     map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = "Iron: Exit Term Mode" })
     map('t', '<M-Left>',  '<C-\\><C-n><C-w>h', { desc = "Jump Left" })
     map('t', '<M-Down>',  '<C-\\><C-n><C-w>j', { desc = "Jump Down" })

@@ -1,55 +1,46 @@
--- Lualine: fast, customisable statusline with icons and live information.
---
--- Layout (left → right across the bottom of the screen):
---   [mode]  [branch · diff · diagnostics]  filename  ···  [encoding · fileformat · filetype]  [progress]  [line:col]
---
--- globalstatus = true: one shared statusline at the bottom instead of a
--- separate bar per split window.
---
--- Windows differences:
---   • nvim-web-devicons is NOT loaded (pure Lua but large; icons unused in
---     paste-edit-copy workflow).
---   • icons_enabled = false (no devicons, no Nerd Font requirement).
---   • branch / diff components are removed — they call git as a subprocess
---     on every refresh, which triggers Windows Defender scans.
-
-local is_win = vim.g.is_windows
-
--- Statusline badge: shows "x0b" when the line-break normaliser is active.
--- Uses lualine's `cond` so the component is completely absent (no separator
--- gap) when the toggle is off.
-local x0b_badge = {
-  function() return "x0b" end,
-  cond = function() return vim.g.x0b_convert == true end,
-}
-
 return {
   "nvim-lualine/lualine.nvim",
-  -- devicons is only useful with icons; skip it on Windows to avoid the
-  -- large startup cost and the Defender hit on the icon-font lookup.
-  dependencies = is_win and {} or { "nvim-tree/nvim-web-devicons" },
+  dependencies = { "nvim-tree/nvim-web-devicons" }, -- Required for file icons
   config = function()
     require("lualine").setup({
       options = {
-        icons_enabled        = not is_win,  -- no Nerd Font / devicons on Windows
-        theme                = "kanagawa",
-        component_separators = { left = "", right = "" },
-        section_separators   = { left = "", right = "" },
-        globalstatus         = true,        -- single bar shared by all split windows
+        icons_enabled = true, -- Enable Nerd Fonts icons
+        theme = "everforest", -- Auto-detects your colorscheme (or change to 'tokyonight', 'gruvbox', etc.)
+        component_separators = { left = "", right = "" }, -- Nerd Font separators for a sleek look
+        section_separators = { left = "", right = "" },
+        disabled_filetypes = { -- Hide statusline in these filetypes if needed
+          statusline = {},
+          winbar = {},
+        },
+        ignore_focus = {},
+        always_divide_middle = true,
+        globalstatus = true, -- Set to true if you want a single statusline for all windows
+        refresh = {
+          statusline = 1000,
+          tabline = 1000,
+          winbar = 1000,
+        },
       },
       sections = {
-        lualine_a = { "mode" },
-        -- On Windows: drop branch + diff — both shell out to git on every refresh.
-        lualine_b = is_win and {} or { "branch", "diff", "diagnostics" },
-        lualine_c = { "filename" },
-        lualine_x = { x0b_badge, "encoding", "fileformat", "filetype" },
-        lualine_y = { "progress" },
-        lualine_z = { "location" },
+        lualine_a = { "mode" }, -- Current mode (e.g., NORMAL with icon)
+        lualine_b = { "branch", "diff", "diagnostics" }, -- Git branch, diff status, LSP diagnostics
+        lualine_c = { "filename" }, -- File name with path if modified
+        lualine_x = { "encoding", "fileformat", "filetype" }, -- Encoding, line endings, file type with icon
+        lualine_y = { "progress" }, -- % progress in file
+        lualine_z = { "location" }, -- Line:column position
       },
-      inactive_sections = {
+      inactive_sections = { -- Dimmed sections for inactive windows
+        lualine_a = {},
+        lualine_b = {},
         lualine_c = { "filename" },
         lualine_x = { "location" },
+        lualine_y = {},
+        lualine_z = {},
       },
+      tabline = {}, -- Optional: Customize tabline if needed
+      winbar = {}, -- Optional: Winbar (top bar) setup
+      inactive_winbar = {},
+      extensions = {}, -- Add extensions like 'fugitive' for Git, 'nvim-tree', etc.
     })
   end,
 }
