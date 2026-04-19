@@ -1,33 +1,20 @@
 
-echo "ﮊ ﮋ ﮌ ﮍ ﮎ ﮏ ﮐ ﮑ"
 
-#ALWAYS specify these for less bullcrap
+
 ```
-podman run -it \
+podman run -d \
+  --name silverbullet \
+  -p 11080:3000 \
   -e LANG=C.UTF-8 \
   -e TERM=xterm-256color \
   -e TZ=Europe/Stockholm \
   -e DEBIAN_FRONTEND=noninteractive \
   --restart=unless-stopped \
-  docker.io/debian:latest /bin/bash
-
-```
-
-## If running containers with cuda adapt the following
-```
-podman run --rm --device nvidia.com/gpu=all docker.io/library/ubuntu:24.04 nvidia-smi
+  docker.io/debian:latest 
 ```
 
 
-## til for loads of stuff including tmux and nvim
-https://github.com/jbranchaud/til
-
-### setup windsurf, to get the token from a container w no clipboard or browser capabilities
-```
-https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
-```
-
-
+https://github.com/silverbulletmd/silverbullet/releases/download/2.6.1/silverbullet-server-linux-x86_64.zip
 
 ### paste secret email
 ```bash
@@ -42,7 +29,7 @@ git config --global user.name 3cnf-f
 ```bash
 apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx sudo fd-find ripgrep
 ```
-
+apt update && apt upgrade -y
 ## install upload download
 ```
 sudo apt update
