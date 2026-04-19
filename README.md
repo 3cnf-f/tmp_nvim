@@ -1,6 +1,4 @@
-https://www.airbnb.se/rooms/680108622077433083?check_in=2026-06-29&check_out=2026-07-01&guests=1&adults=2&children=2&s=67&unique_share_id=ebe84f14-fe9a-4e7d-b644-5a33aa68f473
 
-echo "ﮊ ﮋ ﮌ ﮍ ﮎ ﮏ ﮐ ﮑ"
 
 #ALWAYS specify these for less bullcrap
 ```
@@ -10,7 +8,7 @@ podman run -it \
   -e TZ=Europe/Stockholm \
   -e DEBIAN_FRONTEND=noninteractive \
   --restart=unless-stopped \
-  docker.io/ubuntu:latest /bin/bash
+  docker.io/debian:latest /bin/bash
 
 ```
 
