@@ -44,11 +44,9 @@ apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget
 
 ## install upload download
 ```
-sudo apt update
-sudo apt install software-properties-common   # if not already installed
-sudo add-apt-repository ppa:trzsz/ppa
-sudo apt update
-sudo apt install trzsz
+wget https://github.com/trzsz/trzsz-go/releases/download/v1.2.0/trzsz_1.2.0_linux_x86_64.deb &&\
+dpkg -i trzsz_1.2.0_linux_x86_64.deb &&\
+rm trzsz_1.2.0_linux_x86_64.deb
 
 ```
 ## install github cli
