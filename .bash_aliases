@@ -1,21 +1,24 @@
-[ -f ~/.bash_aliases.env ] && source ~/.bash_aliases.env
 alias f_hbr="ssh $F_HBR_USER_IP" #doc root boz
 alias f_pbr="ssh $F_PBR_USER_IP" #doc podamanis boz
-alias f_bubw="ssh $F_BUBW_USER_IP" #doc podamanis boz
-alias f_bubm="ssh $F_BUBM_USER_IP" #doc podamanis boz
+alias f_bubw="ssh $F_BUBW_USER_IP" #doc bubu local
+alias f_bubm="ssh $F_BUBM_USER_IP" #doc bubu mesh
+alias f_radxe="ssh $F_RADXE_USER_IP" #doc radxa eth0 
 
 alias f_fz_nvim='nvim $(fzf --preview="cat {}")' #doc fzf file and open in nvim
 
-f_send_hz_sbx() { scp -i .ssh/id_ed25519 -P 23 -r  "$1" $F_STORAGEBOX_USER_IP:/home/ ;} #doc send to sbx
-f_get_hz_sbx() { scp -i .ssh/id_ed25519 -P 23 -r $F_STORAGEBOX_USER_IP:/home/$1 . ;} #doc get from sbx
-f_sbx_command() { ssh -i .ssh/id_ed25519 -p23  $F_STORAGEBOX_USER_IP $@ ;} #doc run command on sbx
-f_bubm_get() { scp -i .ssh/id_ed25519 -r $F_BUBM_USER_IP:/home/fa/$1 .;} #doc get from bubu
-f_bubm_send() { scp -i .ssh/id_ed25519 -r "$1" $F_BUBM_USER_IP:/home/fa/ ;} #doc send to bubu
-f_hz_pbr_get() { scp -i .ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/$1 .;} #doc get from pbr
-f_hz_pbr_send() { scp -i .ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/ ;} #doc send to pbr
-f_cmd_pbr() { ssh -i .ssh/id_ed25519  $F_PBR_USER_IP  $@ ;} #doc run command on podamanis
-f_si_get() { scp -i .ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/silverbullet/space/$1 .;} #doc get from si
-f_si_send() { scp -i .ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/silverbullet/space/ ;} #doc send to si
+f_send_5t_sbx() { scp -i ~/.ssh/id_ed25519 -P 23 -r  "$1" $F_FIVET_USER_IP:./ ;} #doc send to sbx
+f_get_5t_sbx() { scp -i ~/.ssh/id_ed25519 -P 23 -r $F_FIVET_USER_IP:/home/$1 . ;} #doc get from sbx
+f_5t_sbx_command() { ssh -i ~/.ssh/id_ed25519 -p23  $F_FIVET_USER_IP $@ ;} #doc run command on sbx
+f_send_hz_sbx() { scp -i ~/.ssh/id_ed25519 -P 23 -r  "$1" $F_STORAGEBOX_USER_IP:/home/ ;} #doc send to sbx
+f_get_hz_sbx() { scp -i ~/.ssh/id_ed25519 -P 23 -r $F_STORAGEBOX_USER_IP:/home/$1 . ;} #doc get from sbx
+f_sbx_command() { ssh -i ~/.ssh/id_ed25519 -p23  $F_STORAGEBOX_USER_IP $@ ;} #doc run command on sbx
+f_bubm_get() { scp -i ~/.ssh/id_ed25519 -r $F_BUBM_USER_IP:/home/fa/$1 .;} #doc get from bubu
+f_bubm_send() { scp -i ~/.ssh/id_ed25519 -r "$1" $F_BUBM_USER_IP:/home/fa/ ;} #doc send to bubu
+f_hz_pbr_get() { scp -i ~/.ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/$1 .;} #doc get from pbr
+f_hz_pbr_send() { scp -i ~/.ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/ ;} #doc send to pbr
+f_cmd_pbr() { ssh -i ~/.ssh/id_ed25519  $F_PBR_USER_IP  $@ ;} #doc run command on podamanis
+f_si_get() { scp -i ~/.ssh/id_ed25519 -r $F_PBR_USER_IP:/home/podamanis/silverbullet/space/$1 .;} #doc get from si
+f_si_send() { scp -i ~/.ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/silverbullet/space/ ;} #doc send to si
 
 ls_new_py() { #doc ls new py
 find . -type d \( -name "node_modules" -o -name ".git" -o -name ".venv" -o -name "__pycache__" \) -prune -o -type f -name "*.py" -print0 | xargs -0 ls -lth | sed -E 's/^([^[:space:]]+[[:space:]]+){4}//' 
