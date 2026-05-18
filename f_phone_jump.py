@@ -11,6 +11,7 @@ command_line_args = ''.join(command_line_args[2:])
 command_line_args=command_line_args.replace("(", "")
 command_line_args=command_line_args.replace(")", "")
 command_line_args=command_line_args.replace("-", "")
+command_line_args=command_line_args.replace(" ", "")
 if command_line_args.startswith('+46') :
     command_line_args=command_line_args[3:]
     command_line_args="0"+command_line_args
