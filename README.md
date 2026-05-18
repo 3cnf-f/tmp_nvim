@@ -203,3 +203,8 @@ pass files that end in .py and contain "import" to fzf as file picker for nvim
 ```
 nvim $(rg --line-number --no-heading --color=always import ./src | fzf --ansi --preview 'echo {} | cut -d: -f1 | xargs batcat --color=always' | cut -d: -f1)
 ```
+
+#set shorcut for phone jump in your window manager 
+```
+/home/username/phone_jump_clip.sh
+```
