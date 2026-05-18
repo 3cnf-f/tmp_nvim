@@ -90,7 +90,9 @@ mkdir ~/.ssh &&\
 cat ~/.config/addto_ssh_config >>~/.ssh/config &&\
 source ~/.bashrc &&\
 mkdir -p ~/.ipython/profile_default/startup/ &&\
-cp ~/.config/panes_ipython_dump.py ~/.ipython/profile_default/startup/
+cp ~/.config/panes_ipython_dump.py ~/.ipython/profile_default/startup/ &&\
+cp ~/.config/f_phone_jump.py ~/ &&\
+cp ~/.config/phone_jump_clip.sh ~/
 
 ```
 
