@@ -24,12 +24,97 @@ sh_phone_jump_py() { python3 ~/f_phone_jump.py $F_PHONE_JUMP_URL "$@" ;} #doc se
 sh_phone_jump_py_clip() { sh_phone_jump_py "$(xclip -selection clipboard -o)"; } #doc send clipboard to phone_jump
 
 
-ls_new_py() { #doc ls new py
-    find . -type d \( -name "node_modules" -o -name ".git" -o -name ".venv" -o -name "__pycache__" \) -prune \
-    -o -type f -name "*.py" -print0 |
-    xargs -0 ls -lth --time-style=long-iso -r |
-    sed -E 's/^([^[:space:]]+[[:space:]]+){4}//' |
-    column -t
+f_py_create_repo() { #doc new py repo w readme, custom .gitignore and .codeiumignore
+  local repo_name="$1"
+  
+  if [ -z "$repo_name" ]; then
+      echo "Error: Repo name required"
+      return 1
+  fi
+  
+  if gh repo view "3cnf-f/$repo_name" &>/dev/null; then
+    echo "Error: Repo $repo_name already exists on GitHub"
+    return 1
+  fi
+  
+  mkdir "$repo_name" && cd "$repo_name" || return 1
+  
+  git init
+  gh repo create "$repo_name" --private --source=. --remote=origin
+  
+  # 1. Create .gitignore with custom header
+  cat << 'EOF' > .gitignore
+# my stuff ########
+*.json
+secrets.*
+my_secrets.*
+*.txt
+!requests.txt
+!requirements.txt
+token.*
+*.url
+*.csv
+*.xlsx
+*.sq3
+# Environments
+.venv/
+venv/
+env/
+# Neovim / Vim Swap files
+*.swp
+*.swo
+*.swn
+.*.swp
+.*.swo
+.*.swn
+# Neovim / Vim Backup files
+*.bak
+*~
+*.un~
+# Neovim / Vim Undo files
+*.undo
+.netrwhist
+# Session files
+Session.vim
+*.env
+# my stuff end ########
+EOF
+    curl -sSL "https://raw.githubusercontent.com/3cnf-f/tmp_nvim/54d0499c3979036f67635bd14be67864c1b99870/nvim/lua/plugins/f_visi_nvim_tool.py" -o f_visi_nvim_tool.py
+
+  echo "Repository $repo_name created and initialized."
+}
+
+f_acp() { #doc pip frz add commit push
+    # Check if .git exists
+    if [ ! -d ".git" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+    
+    # Use "f_acp: no args" if no arguments are provided
+    local commit_message="${@:-f_acp: no args}"
+
+    # Handle dependencies for both standard venv and uv
+    if [ -d ".venv" ]; then
+        if command -v uv &> /dev/null; then
+            uv pip freeze > requirements.txt
+        else
+            # Explicit path prevents freezing global python if venv isn't active
+            .venv/bin/pip freeze > requirements.txt
+        fi
+    fi
+
+    git add . && git commit -m "$commit_message" && git push
+}
+
+t_check_nrun_venv(){ #doc tmux: activate if venv
+    # Check if .venv exists
+    if [ ! -d ".venv" ]; then
+        echo "Error: .venv not found or initialized"
+        return 1
+    fi
+    # This path is identical for both uv and standard python -m venvs on Linux
+    source .venv/bin/activate
 }
 ### Solution for f_ocr_img (Resolution Restricted)
 f_ocr_img() {
@@ -172,28 +257,3 @@ EOF
 }
 
 
-f_acp() { #doc pip frz add commit push
-    # Check if .git exists
-    if [ ! -d ".git" ]; then
-        echo "Error: Not in a git repository"
-        return 1
-    fi
-    
-    # Use "f_acp: no args" if no arguments are provided
-    local commit_message="${@:-f_acp: no args}"
-
-    if [ -d ".venv" ]; then
-        pip freeze > requirements.txt
-    fi
-
-
-    git add . && git commit -m "$commit_message" && git push
-}
-t_check_nrun_venv(){ #doc tmux: activate if venv
-    #check if .git exists
-    if [ ! -d ".venv" ]; then
-        echo "Error: venv not initialized"
-        return 1
-    fi
-    source .venv/bin/activate
-}
