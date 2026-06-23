@@ -24,9 +24,12 @@ sh_phone_jump_py() { python3 ~/f_phone_jump.py $F_PHONE_JUMP_URL "$@" ;} #doc se
 sh_phone_jump_py_clip() { sh_phone_jump_py "$(xclip -selection clipboard -o)"; } #doc send clipboard to phone_jump
 
 ls_new_py() { #doc ls new py
-find . -type d \( -name "node_modules" -o -name ".git" -o -name ".venv" -o -name "__pycache__" \) -prune -o -type f -name "*.py" -print0 | xargs -0 ls -lth | sed -E 's/^([^[:space:]]+[[:space:]]+){4}//' 
+    find . -type d \( -name "node_modules" -o -name ".git" -o -name ".venv" -o -name "__pycache__" \) -prune \
+    -o -type f -name "*.py" -print0 |
+    xargs -0 ls -lth --time-style=long-iso -r |
+    sed -E 's/^([^[:space:]]+[[:space:]]+){4}//' |
+    column -t
 }
-
 
 
 f_py_create_repo() { #doc new py repo w readme, custom .gitignore and .codeiumignore
