@@ -23,6 +23,11 @@ f_si_send() { scp -i ~/.ssh/id_ed25519 -r "$1" $F_PBR_USER_IP:/home/podamanis/si
 sh_phone_jump_py() { python3 ~/f_phone_jump.py $F_PHONE_JUMP_URL "$@" ;} #doc send phonenumber
 sh_phone_jump_py_clip() { sh_phone_jump_py "$(xclip -selection clipboard -o)"; } #doc send clipboard to phone_jump
 
+ls_new_py() { #doc ls new py
+find . -type d \( -name "node_modules" -o -name ".git" -o -name ".venv" -o -name "__pycache__" \) -prune -o -type f -name "*.py" -print0 | xargs -0 ls -lth | sed -E 's/^([^[:space:]]+[[:space:]]+){4}//' 
+}
+
+
 
 f_py_create_repo() { #doc new py repo w readme, custom .gitignore and .codeiumignore
   local repo_name="$1"
@@ -79,8 +84,6 @@ Session.vim
 *.env
 # my stuff end ########
 EOF
-    curl -sSL "https://raw.githubusercontent.com/3cnf-f/tmp_nvim/54d0499c3979036f67635bd14be67864c1b99870/nvim/lua/plugins/f_visi_nvim_tool.py" -o f_visi_nvim_tool.py
-
   echo "Repository $repo_name created and initialized."
 }
 
