@@ -85,5 +85,17 @@ return {
     -- Paragraphs (replaces { })
     vim.keymap.set("n", "öf", "}", { desc = "Next paragraph" })
     vim.keymap.set("n", "öb", "{", { desc = "Previous paragraph" })
+    local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
+
+-- Repeat the last Treesitter movement with ; and ,
+    vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next, { desc = "Repeat next move" })
+    vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous, { desc = "Repeat previous move" })
+
+    -- Make built-in f, F, t, T also play nicely with this system
+    vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
+    vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
+    vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
+    vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
+
   end,
 }

@@ -1,11 +1,17 @@
 vim.keymap.set("n","-","<cmd>Oil --float<CR>",{desc="Open parent directory in Oil"})
 vim.keymap.set("n", "<leader>tr", ":ToggleRelativeNumber<CR>", { silent = true })
+vim.keymap.set("n", "zä", ":FoldFunctions<CR>", { silent = true })
+
 
 local keymap = vim.keymap -- for conciseness
 local km = vim.keymap
 
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+-- Remap H to move to the first non-blank character
+vim.keymap.set({'n', 'v'}, 'H', '^', { desc = "Move to first non-blank character" })
 
+-- Remap L to move to the last non-blank character
+vim.keymap.set({'n', 'v'}, 'L', 'g_', { desc = "Move to last non-blank character" })
 -- increment/decrement numbers
 keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
 keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement

@@ -161,10 +161,12 @@ return {
 
       local q = vim.fn.shellescape(csv_abs)
       local shell_cmd = string.format(
-        ". ./.venv/bin/activate; until [ -f %s ]; do sleep 0.2; done && vd %s; rm -f %s; tmux kill-window",
+        ". ./.venv/bin/activate; until [ -f %s ]; do sleep 0.2; done && vd %s; printf '\nPress Enter to delete file and close window...'; read -r _; rm -f %s; tmux kill-window",
         q, q, q
       )
       vim.fn.system({ "tmux", "send-keys", "-t", target_session .. ":" .. win_name, shell_cmd, "Enter" })
     end, { noremap = true, silent = false, desc = "visi: export <cword> to CSV and open in vd" })
   end,
 }
+-- ; rm -f %s; tmux kill-window
+-- ". ./.venv/bin/activate; until [ -f \"%s\" ]; do sleep 0.2; done && vd \"%s\"; printf '\nPress Enter to delete file and close window...'; read -r _; rm -f \"%s\"; tmux kill-window"
