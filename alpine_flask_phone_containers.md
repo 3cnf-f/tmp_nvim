@@ -4,5 +4,5 @@ podman run -itd --name phn_jmp_bok -v ./py_containers/phone_jump:/phone_jump -v 
 ```
 
 ```
-RUN apk add --no-cache py3-flask
+apk add --no-cache py3-flask
 ```
