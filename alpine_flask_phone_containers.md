@@ -4,5 +4,5 @@ podman run -itd --name phn_jmp_bok -v ./py_containers/phone_jump:/phone_jump -v 
 ```
 
 ```
-RUN pip install --no-cache-dir flask --break-system-packages
+RUN apk add --no-cache py3-flask
 ```
