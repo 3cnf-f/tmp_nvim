@@ -3,6 +3,7 @@ alias f_pbr="ssh $F_PBR_USER_IP" #doc podamanis boz
 alias f_bubw="ssh $F_BUBW_USER_IP" #doc bubu local
 alias f_bubm="ssh $F_BUBM_USER_IP" #doc bubu mesh
 alias f_radxe="ssh $F_RADXE_USER_IP" #doc radxa eth0 
+alias f_tabs9='scrcpy --no-video --no-audio -MK --shortcut-mod=rctrl' #turn on adb tablet control
 
 
 alias f_fz_nvim='nvim $(fzf --preview="cat {}")' #doc fzf file and open in nvim
