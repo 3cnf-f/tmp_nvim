@@ -35,4 +35,5 @@ Edit ~/.config/waybar/config.jsonc (or config.json), find the wlr/workspaces blo
       "8": ["tabmon"]
     }
 
+pkill -SIGUSR2 waybar
 
