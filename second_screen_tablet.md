@@ -1,3 +1,5 @@
+sudo pacman -S wayvnc android-tools
+
 hyprctl output create headless tabmon
 ok
 hyprctl keyword monitor tabmon,2960x1848@60,auto-right,2
