@@ -21,3 +21,18 @@ workspace = 6, monitor:tabmon
 workspace = 7, monitor:tabmon
 workspace = 8, monitor:tabmon
 
+Edit ~/.config/waybar/config.jsonc (or config.json), find the wlr/workspaces block, and change it to show all workspaces persistently:
+
+    },
+    "persistent-workspaces": {
+      "1": ["eDP-1"],
+      "2": ["eDP-1"],
+      "3": ["eDP-1"],
+      "4": ["eDP-1"],
+      "5": ["eDP-1"],
+      "6": ["tabmon"],
+      "7": ["tabmon"],
+      "8": ["tabmon"]
+    }
+
+
