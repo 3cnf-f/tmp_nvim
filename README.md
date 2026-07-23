@@ -182,6 +182,13 @@ podman exec -d win_nvim_dev /root/.local/bin/ttyd -W -p 11310 -t enableTrzsz=tru
 ```
 tmux new-session -t work -s browser_view
 ```
+### to create a session called font_monk on a new server called omy omyserver with specified config file
+### and how to attach a new-session to that session
+```
+tmux -L omyserver -f ~/.tmux.omyarchy.conf new-session -s font_monk
+tmux -L omyserver new-session -t font_monk -s att_font_monk
+
+```
 ## Other stuff:
  
 ```

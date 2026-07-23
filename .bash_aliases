@@ -4,7 +4,8 @@ alias f_bubw="ssh $F_BUBW_USER_IP" #doc bubu local
 alias f_bubm="ssh $F_BUBM_USER_IP" #doc bubu mesh
 alias f_radxe="ssh $F_RADXE_USER_IP" #doc radxa eth0 
 alias f_tabs9='scrcpy --no-video --no-audio -MK --shortcut-mod=rctrl' #turn on adb tablet control
-alias nvim_me='NVIM_APPNAME=nvim_personal nvim' # run personal version of nvim
+alias nvim_me='NVIM_APPNAME=nvim_me nvim' # run personal version of nvim
+alias nvim_old='NVIM_APPNAME=nvim_old nvim' # run personal version of nvim
 
 alias f_fz_nvim='nvim $(fzf --preview="cat {}")' #doc fzf file and open in nvim
 
