@@ -1,3 +1,5 @@
+
+source ~/bash_alias_env.env
 alias f_hbr="ssh $F_HBR_USER_IP" #doc root boz
 alias f_pbr="ssh $F_PBR_USER_IP" #doc podamanis boz
 alias f_bubw="ssh $F_BUBW_USER_IP" #doc bubu local

@@ -1,11 +1,14 @@
+# REPL text
+# control the tablet
+alias tablet-control='scrcpy --no-video --no-audio -MK --shortcut-mod=rctrl'
+
 sudo pacman -S wayvnc android-tools
 
 hyprctl output create headless tabmon
-ok
 hyprctl keyword monitor tabmon,2960x1848@60,auto-right,2
-ok
-wayvnc -o tabmon 127.0.0.1 5900
+wayvnc -o tabmon 127.0.0.1 5900 
 
+adb reverse tcp:5900 tcp:5900
 
 # Set screen timeout to the Android maximum (~24.8 days)
 adb shell settings put system screen_off_timeout 2147483647
