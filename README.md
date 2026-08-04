@@ -39,7 +39,7 @@ git config --global user.name 3cnf-f
 ```
 
 ```bash
-apt update && apt upgrade -y &&apt install -y build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx sudo fd-find ripgrep
+apt update && apt upgrade -y &&apt install -y --no-install-reccomends build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx sudo fd-find ripgrep
 ```
 
 ## install upload download
