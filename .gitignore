@@ -4,6 +4,7 @@
 
 # Session files
 Session.vim
+lazy-lock.*
 
 # Netrw / Directory checks
 .netrwhist
