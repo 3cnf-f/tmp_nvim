@@ -225,3 +225,6 @@ nvim $(rg --line-number --no-heading --color=always import ./src | fzf --ansi --
 /home/username/phone_jump_clip.sh
 ```
 Åv shortcut in nvim needs tmux pantitle plugin, pip install visidata and a local copy of the f_visixxx .py
+
+# herdr remote login, allows for local clipboard acess
+herdr --remote ssh://you@server:2222
