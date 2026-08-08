@@ -26,7 +26,11 @@ https://github.com/jbranchaud/til
 https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
 ```
 
-
+# install tty-copy
+```
+curl -L -o /usr/local/bin/tty-copy https://github.com/jirutka/tty-copy/releases/download/v0.2.2/tty-copy.x86_64-linux \&&
+chmod +x /usr/local/bin/tty-copy
+```
 
 ### paste secret email
 ```bash
