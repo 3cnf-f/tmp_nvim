@@ -1,0 +1,12 @@
+name = "silverbullet"
+description = "Todo and more"
+working_dir = "~/send_to_silverbullet/"   # 
+[[tabs]]
+name = "sb tab"
+[[tabs.panes]]
+label ="nv sb"
+command ="nvim $PWD"
+[[tabs.panes]]
+label = "bash sb"
+command ="ls -alt"
+split ="down"

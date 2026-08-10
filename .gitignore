@@ -1,14 +1,17 @@
 # Swap files
 *.swp
 *.swo
+session.*
+.plugins.lock
+*.sock
+**/herdr/plugins/github/*
 
 # Session files
 Session.vim
 lazy-lock.*
-
+*tmp-install*
 # Netrw / Directory checks
 .netrwhist
-
 # Logs
 *.log
 

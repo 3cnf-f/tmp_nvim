@@ -1,0 +1,12 @@
+name = "herdr plus proj"
+description = "edit proj"
+working_dir = "~/.config/herdr/plugins/config/cloudmanic.herdr-plus/projects/"   # 
+[[tabs]]
+name = "h plus pr"
+[[tabs.panes]]
+label ="nv h plus pr"
+command ="nvim $PWD"
+[[tabs.panes]]
+label = "bash h plus"
+command ="ls -alt"
+split ="down"

@@ -1,0 +1,12 @@
+name = "cf"
+description = "manage cf python repo"
+working_dir = "~/py_projects/cf_tools/"   # 
+[[tabs]]
+name = "IDE"
+[[tabs.panes]]
+label ="nvim"
+command ="nvim README.md"
+[[tabs.panes]]
+label = "venv"
+command ="source .venv/bin/activate"
+split ="down"
