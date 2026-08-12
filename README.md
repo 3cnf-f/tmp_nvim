@@ -109,6 +109,11 @@ cp ~/.config/phone_jump_clip.sh ~/
 ```
 curl -fsSL https://herdr.dev/install.sh | sh
 ```
+## install herdr-plus plugin
+
+```
+herdr plugin install cloudmanic/herdr-plus
+```
 # shit to add to /etc/hosts for blocking yt for example
 ```bash
 cat ~/.config/addto_etc_hosts >>/etc/hosts
