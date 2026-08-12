@@ -104,7 +104,11 @@ cp ~/.config/f_phone_jump.py ~/ &&\
 cp ~/.config/phone_jump_clip.sh ~/
 
 ```
+## install herdr
 
+```
+curl -fsSL https://herdr.dev/install.sh | sh
+```
 # shit to add to /etc/hosts for blocking yt for example
 ```bash
 cat ~/.config/addto_etc_hosts >>/etc/hosts
