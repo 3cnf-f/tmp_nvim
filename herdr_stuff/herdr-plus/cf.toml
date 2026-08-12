@@ -1,6 +1,6 @@
-name = "cf"
-description = "manage cf python repo"
-working_dir = "~/py_projects/cf_tools/"   # 
+name = "contained"
+description = "manage contained python repo"
+working_dir = "~/py_projects/contained/"   # 
 [[tabs]]
 name = "IDE"
 [[tabs.panes]]
@@ -8,5 +8,5 @@ label ="nvim"
 command ="nvim README.md"
 [[tabs.panes]]
 label = "venv"
-command ="source .venv/bin/activate"
+command ="herdr pane resize --direction down --amount 0.3 --current&&source .venv/bin/activate"
 split ="down"

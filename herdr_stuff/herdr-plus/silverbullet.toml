@@ -8,5 +8,5 @@ label ="nv sb"
 command ="nvim $PWD"
 [[tabs.panes]]
 label = "bash sb"
-command ="ls -alt"
+command ="herdr pane resize --direction down --amount 0.3 --current&&ls -alt"
 split ="down"
