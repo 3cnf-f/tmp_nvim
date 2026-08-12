@@ -1,0 +1,53 @@
+# herdr-plugin.toml — registers nvim's f-herdr as a herdr plugin.
+#
+# Why this exists: herdr popups are real herdr surfaces (placement = "popup"),
+# but the socket API only opens one via plugin.pane.open, which requires a
+# registered plugin_id + entrypoint. A plain nvim plugin has no plugin_id, so
+# nvim has to be linked as a plugin before it can ask for a popup.
+#
+# Register from a running nvim with :HerdrPluginLink, or by hand:
+#   herdr plugin link /root/.config/nvim/f-herdr-plugin
+#
+# Deliberately minimal, for security as much as for debugging:
+#   - no [[build]]   — nothing is compiled or downloaded at link time
+#   - no [[events]]  — herdr never runs us on its own; only an explicit
+#                      plugin.pane.open from nvim starts anything
+#   - no [[actions]] — nothing appears in the action menu to be invoked by
+#                      accident
+# The single entry point below is a pane, started only when we ask for it.
+
+id = "local.f-herdr"
+name = "f-herdr (nvim)"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "nvim <-> herdr bridge: renders nvim-supplied text in a herdr popup pane."
+platforms = ["linux", "macos"]
+
+# popup — a herdr popup pane that displays a file nvim wrote, then closes on any
+# key. The path arrives as F_HERDR_POPUP_FILE in the per-open `env` map, so no
+# buffer text is ever interpolated into a shell word. herdr tears the pane down
+# when the process exits.
+#
+# width/height here are defaults; plugin.pane.open can override both per call
+# (cells as an integer, or a percentage string like "60%").
+[[panes]]
+id = "popup"
+title = "f-herdr"
+placement = "popup"
+platforms = ["linux", "macos"]
+width = "60%"
+height = "50%"
+command = ["sh", "popup.sh"]
+
+# shell — a herdr popup pane running an interactive shell. Same popup surface,
+# different process: nvim gets the new pane_id back from plugin.pane.open and
+# then drives it with pane.send_text / pane.send_keys, so the command to run is
+# never baked into this manifest or interpolated by the script.
+[[panes]]
+id = "shell"
+title = "f-herdr shell"
+placement = "popup"
+platforms = ["linux", "macos"]
+width = "70%"
+height = "60%"
+command = ["sh", "shell.sh"]
