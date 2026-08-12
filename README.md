@@ -114,6 +114,12 @@ curl -fsSL https://herdr.dev/install.sh | sh
 ```
 herdr plugin install cloudmanic/herdr-plus
 ```
+## copy config for  herdr and plugins
+
+```
+cp .config/herdr_stuff/config.toml ~/.config/herdr/
+cp .config/herdr_stuff/herdr-plus/projects/* ~/.config/herdr/plugins/config/cloudmanic.herdr-plus/projects/* 
+```
 # shit to add to /etc/hosts for blocking yt for example
 ```bash
 cat ~/.config/addto_etc_hosts >>/etc/hosts
