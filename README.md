@@ -76,9 +76,9 @@ apt install python3-debugpy -y
 
 ```
 ### install treesitter
-ˋˋˋ
+```
 curl -LO https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz && gzip -d tree-sitter-linux-x64.gz && chmod +x tree-sitter-linux-x64 && chown root:root tree-sitter-linux-x64 &&  mv tree-sitter-linux-x64 /usr/local/bin/tree-sitter
-ˋˋˋ 
+```
 
 ## get nvim and clone this repo
 ```bash
