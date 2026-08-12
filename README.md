@@ -18,13 +18,7 @@ podman run --rm --device nvidia.com/gpu=all docker.io/library/ubuntu:24.04 nvidi
 ```
 
 
-## til for loads of stuff including tmux and nvim
-https://github.com/jbranchaud/til
 
-### setup windsurf, to get the token from a container w no clipboard or browser capabilities
-```
-https://windsurf.com/profile?response_type=token&redirect_uri=vim-show-auth-token
-```
 
 # install tty-copy
 ```
@@ -32,18 +26,9 @@ curl -L -o /usr/local/bin/tty-copy https://github.com/jirutka/tty-copy/releases/
 chmod +x /usr/local/bin/tty-copy
 ```
 
-### paste secret email
-```bash
-export TMP_GITEMAIL=""
-```
-```
-git config --global user.email $TMP_GITUSER  \&&
-git config --global user.name 3cnf-f
-
-```
 
 ```bash
-apt update && apt upgrade -y &&apt install -y --no-install-recommends build-essential nano git curl wget xz-utils zstd unzip iproute2 tmux pipx sudo fd-find ripgrep
+apt update && apt upgrade -y &&apt install -y --no-install-recommends build-essential nano git curl wget xz-utils zstd unzip iproute2 pipx sudo fd-find ripgrep
 
 ```
 
@@ -90,9 +75,6 @@ git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 ##shit to add to .bashrc / bashaliases
 ##move .tmux.conf,  install tpm
 ```bash
-cat ~/.config/.tmux.conf >>~/.tmux.conf &&\
-mkdir -p ~/.tmux/plugins &&\
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm &&\
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/.bash_aliases >>~/.bash_aliases &&\
 mkdir ~/.ssh &&\
@@ -118,12 +100,8 @@ herdr plugin install cloudmanic/herdr-plus
 
 ```
 cp ~/.config/herdr_stuff/config.toml ~/.config/herdr/ &&\
-mkdir -p ~/.config/herdr/plugins/config/cloudmanic.herdr-plus/projects/ &&\
+rm ~/.config/herdr/plugins/config/cloudmanic.herdr-plus/projects/* &&\ 
 cp ~/.config/herdr_stuff/herdr-plus/* ~/.config/herdr/plugins/config/cloudmanic.herdr-plus/projects/ &&\
-```
-# shit to add to /etc/hosts for blocking yt for example
-```bash
-cat ~/.config/addto_etc_hosts >>/etc/hosts
 ```
 
 
@@ -146,37 +124,17 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf &&\
 
 ## create ssh key for git
 ```bash
-ssh-keygen -t ed25519 -C $(TMP_GITEMAIL) -f ~/.ssh/git_ed25519 
+ssh-keygen -t ed25519 -f ~/.ssh/git_ed25519 
 ```
-
-## when in a repo setup git remote url so that it doesnt try to acess with http
-```bash
-git remote set-url origin <git ssh url>
-
-```
-
-## add commit push
-
-```
-git add . &&\
-git commit -m "yes" &&\
-git push
-```
+## open the following for setup
+http://github.com/3cnf-f/priv_dots
 
 
 
-## setup git for add and commit
-## to make an identical branch as backup
-```
-git config --global gpg.format ssh &&\
-git config --global user.signingkey ~/.ssh/git_ed25519.pub &&\
-git config --global commit.gpgsign true
 
-```
 
 Create branch: 
 ```
-git checkout -b backup-branch
 git checkout -b flash
 git commit -a
 git push --set-upstream origin flash
@@ -214,17 +172,6 @@ tmux -L omyserver -f ~/.tmux.omyarchy.conf new-session -s font_monk
 tmux -L omyserver new-session -t font_monk -s att_font_monk
 
 ```
-## Other stuff:
- 
-```
-save pip requirements but only modules that are used
-pip install pipreqs
-
-# Scan recursively but ignore common non-source directories
-pipreqs . --ignore .venv,venv,archive,tests,__pycache__,.pytest_cache,.git --force
-
-```
-
 large file dl from google drive with curl
 
 ```
