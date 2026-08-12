@@ -40,10 +40,26 @@
 -- this workspace.
 
 return {
-  -- A `dir` no other local spec claims. lazy.nvim dedupes by dir, so sharing one
-  -- means a spec silently never loads — f-hello has lua/plugins, f-herdr has
-  -- lua, visi_tmux_pane had the config root. lua/config is free.
-  dir = vim.fn.stdpath("config") .. "/lua/config",
+  -- Two rules for a local spec's `dir`, the second learned the hard way:
+  --
+  --   1. No other spec may claim it. lazy.nvim dedupes by dir, so sharing one
+  --      means a spec silently never loads. f-herdr claims lua; the config
+  --      root was visi_tmux_pane's.
+  --
+  --   2. It must not contain a file called lazy.lua. lazy.nvim's pkg loader
+  --      (lua/lazy/pkg/lazy.lua: M.lazy_file = "lazy.lua") reads <dir>/lazy.lua
+  --      as this plugin's spec and executes it. This spec used to say
+  --      lua/config, which is where the bootstrap lazy.lua lives — so lazy ran
+  --      the bootstrap a second time from inside its own setup(). Where the
+  --      plugins were already installed that passed unnoticed; on a fresh
+  --      machine it re-entered setup() before anything had been cloned and
+  --      died on the first require of a missing plugin, surfacing as
+  --      "Re-sourcing your config is not supported" and an E5113 loop error
+  --      about config.keymaps.
+  --
+  -- lua/plugins satisfies both: no lazy.lua, pkg.json or rockspec in it, and
+  -- nothing else claims it now that f-hello is gone.
+  dir = vim.fn.stdpath("config") .. "/lua/plugins",
   name = "f_visi_h_pane",
   lazy = false,
   config = function()
