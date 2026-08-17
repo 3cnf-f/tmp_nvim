@@ -3,7 +3,13 @@
 -- herdr speaks newline-delimited JSON over a unix socket: one request object per
 -- line, one response object per line. The socket path is injected as
 -- HERDR_SOCKET_PATH into every herdr-managed pane, so this works whenever nvim
--- was launched from inside herdr. No CLI shell-out.
+-- was launched from inside herdr.
+--
+-- One CLI shell-out, in M.sessions(), and only there. A socket belongs to
+-- exactly one session and knows nothing about the others, so session
+-- *enumeration* is the single question the API cannot answer — hence
+-- `herdr session list --json`. Everything else, including all cross-session
+-- work, goes over a socket.
 --
 --   request   {"id":"nvim", "method":"pane.get", "params":{"pane_id":"w6:p1"}}
 --   response  {"id":"nvim", "result":{...}}   or   {"id":"nvim", "error":{code,message}}
@@ -30,6 +36,18 @@
 -- surface shows in herdr, a raw pane id ("w6:p3"), or a raw tab id ("w6:t2",
 -- resolved to that tab's focused pane). Other plugins should hold the *name*:
 -- it survives across calls and is what M.get(name) takes.
+--
+-- Beyond our own surfaces there are *target tables*, which can name a pane in
+-- any workspace of any running session:
+--
+--   { session, socket, workspace_id, pane_id, terminal_id }   socket=nil => here
+--
+-- and the socket-aware verbs that take one: M.send_input_to, M.send_keys_to,
+-- M.read_from, M.run_on, M.focus_target, M.split_pane, M.new_tab_on, plus
+-- M.sessions / M.panes_on / M.workspaces_on to enumerate and M.verify_target to
+-- check. See the long note above M.target_socket for why a target is a pointer
+-- and never a registry entry. f_target.lua owns which target is currently
+-- picked; this file only knows how to talk to one.
 --
 -- Identity and ownership both hang off terminal_id, not pane id. A pane id
 -- ("w6:p1") names a slot and can be reissued after that pane closes; a
@@ -77,13 +95,25 @@ return {
       return path, nil
     end
 
-    -- One request, one response, blocking. Returns (result, nil) or (nil, err).
-    function M.call(method, params, timeout_ms)
-      local path, err = M.socket_path()
-      if not path then
-        return nil, err
+    -- One request, one response, blocking, on an explicitly named socket.
+    -- Returns (result, nil) or (nil, err).
+    --
+    -- The socket is a parameter rather than always M.socket_path() because a
+    -- herdr *session* is exactly one socket. Nothing in protocol 19 takes a
+    -- session or a socket as a parameter — the only session-ish fields in the
+    -- request schema are agent_session_id and agent_session_path, which are
+    -- about an agent's conversation, not about which server you are talking to.
+    -- So "address another session" can only mean "connect somewhere else", and
+    -- every socket-aware helper below threads a path through to here.
+    function M.request(socket, method, params, timeout_ms)
+      if type(socket) ~= "string" or socket == "" then
+        return nil, "no socket path given"
+      end
+      if not (vim.uv or vim.loop).fs_stat(socket) then
+        return nil, "socket file does not exist: " .. socket
       end
 
+      local path = socket
       local buf = ""
       local ok, chan = pcall(vim.fn.sockconnect, "pipe", path, {
         on_data = function(_, data)
@@ -124,6 +154,17 @@ return {
         return nil, string.format("herdr error %s: %s", decoded.error.code, decoded.error.message)
       end
       return decoded.result, nil
+    end
+
+    -- Our own session: the socket injected into this pane. Every pre-existing
+    -- call site goes through here, so adding M.request above changed nothing
+    -- for them.
+    function M.call(method, params, timeout_ms)
+      local path, err = M.socket_path()
+      if not path then
+        return nil, err
+      end
+      return M.request(path, method, params, timeout_ms)
     end
 
     ---------------------------------------------------------------------------
@@ -969,9 +1010,9 @@ return {
     -- vim.wait() with no condition is the delay on purpose — a real sleep would
     -- stall the event loop, and M.call needs that loop running to receive its
     -- reply, so sleeping here would deadlock the next read.
-    local function wait_for(pane_id, predicate, attempts)
+    local function wait_for(socket, pane_id, predicate, attempts)
       for _ = 1, attempts or 40 do
-        local result = M.call("pane.read", { pane_id = pane_id, source = "visible", lines = 20 })
+        local result = M.request(socket, "pane.read", { pane_id = pane_id, source = "visible", lines = 20 })
         local text = result and result.read and result.read.text
         if text and predicate(text) then
           return true
@@ -989,19 +1030,16 @@ return {
     -- the command would just sit at the prompt. Two startup races to dodge:
     -- typing before a shell exists (keystrokes are dropped), and pressing Enter
     -- before the line editor has the text (the line is lost).
-    function M.run(target, cmd)
-      local pane_id, _, err = M.resolve_pane(target)
-      if not pane_id then
-        return nil, err
-      end
-
+    -- The socket-explicit core, shared by M.run (this session, by target name)
+    -- and M.run_on (any session, by target table).
+    local function run_in(socket, pane_id, cmd)
       -- 1. wait for a prompt — any non-blank content means the shell is up.
-      wait_for(pane_id, function(t)
+      wait_for(socket, pane_id, function(t)
         return t:match("%S") ~= nil
       end)
 
       -- 2. type it, with no trailing newline.
-      local ok, send_err = M.call("pane.send_text", { pane_id = pane_id, text = cmd })
+      local ok, send_err = M.request(socket, "pane.send_text", { pane_id = pane_id, text = cmd })
       if not ok then
         return nil, send_err
       end
@@ -1011,13 +1049,413 @@ return {
       -- the whole string against the rendered screen would fail.
       local probe = vim.trim((cmd:match("^[^\n]*") or ""):sub(1, 12))
       if probe ~= "" then
-        wait_for(pane_id, function(t)
+        wait_for(socket, pane_id, function(t)
           return t:find(probe, 1, true) ~= nil
         end)
       end
 
       -- 4. submit.
-      return M.call("pane.send_keys", { pane_id = pane_id, keys = { "Enter" } })
+      return M.request(socket, "pane.send_keys", { pane_id = pane_id, keys = { "Enter" } })
+    end
+
+    function M.run(target, cmd)
+      local pane_id, _, err = M.resolve_pane(target)
+      if not pane_id then
+        return nil, err
+      end
+      local socket, socket_err = M.socket_path()
+      if not socket then
+        return nil, socket_err
+      end
+      return run_in(socket, pane_id, cmd)
+    end
+
+    ---------------------------------------------------------------------------
+    -- sessions, and targets that live in another workspace or another session
+    ---------------------------------------------------------------------------
+    --
+    -- A *target table* names a surface anywhere herdr can reach:
+    --
+    --   { session, socket, workspace_id, pane_id, terminal_id }
+    --
+    -- socket = nil means this session, so a target for a pane next door is just
+    -- { pane_id = "w2:p1" }.
+    --
+    -- A target is a POINTER, not a surface, and deliberately never enters
+    -- M.surfaces. The registry means "surfaces f-herdr created", and everything
+    -- in it is verified by our owner tag — which a pane we did not create can
+    -- never carry. So a target is verified the other way round: by terminal_id
+    -- alone, via pane.get on its own socket. It is never renamed either; there
+    -- is no reason to stamp a stranger's pane, and M.rename already declines to.
+
+    -- Absolute socket for a target, defaulting to our own session.
+    function M.target_socket(t)
+      if type(t) == "table" and type(t.socket) == "string" and t.socket ~= "" then
+        return t.socket, nil
+      end
+      return M.socket_path()
+    end
+
+    function M.is_this_socket(socket)
+      local mine = M.socket_path()
+      return mine ~= nil and socket == mine
+    end
+
+    -- Every session this machine knows about, as
+    -- { name, socket, session_dir, running, default, is_this }.
+    --
+    -- This is the one CLI shell-out in the plugin (see the note at the top of
+    -- the file). It exists because session *enumeration* is the one thing the
+    -- socket API cannot do: a socket only ever knows about its own session, so
+    -- there is no method that lists the others. Argument-vector form, never a
+    -- shell string, so nothing is word-split or globbed.
+    --
+    -- Degrades to "just us" rather than failing, so the pickers still work on a
+    -- machine where the CLI is absent or older than --json.
+    function M.sessions()
+      local mine = M.socket_path()
+
+      local function only_us(reason)
+        if not mine then
+          return nil, reason or "no herdr session found"
+        end
+        return { {
+          name = vim.env.HERDR_SESSION_NAME or "this session",
+          socket = mine,
+          running = true,
+          default = true,
+          is_this = true,
+          degraded = reason,
+        } }, nil
+      end
+
+      if vim.fn.executable("herdr") ~= 1 then
+        return only_us("herdr CLI not on $PATH")
+      end
+
+      local out = vim.fn.system({ "herdr", "session", "list", "--json" })
+      if vim.v.shell_error ~= 0 then
+        return only_us("herdr session list failed: " .. vim.trim(tostring(out)):sub(1, 120))
+      end
+
+      local ok, decoded = pcall(vim.json.decode, out)
+      if not ok or type(decoded) ~= "table" or type(decoded.sessions) ~= "table" then
+        return only_us("could not parse herdr session list --json")
+      end
+
+      local sessions = {}
+      for _, s in ipairs(decoded.sessions) do
+        -- A stopped session has no socket to talk to, so it is not a target.
+        if s.running and type(s.socket_path) == "string" and s.socket_path ~= "" then
+          table.insert(sessions, {
+            name = s.name,
+            socket = s.socket_path,
+            session_dir = s.session_dir,
+            running = true,
+            default = s.default == true,
+            is_this = mine ~= nil and s.socket_path == mine,
+          })
+        end
+      end
+      if #sessions == 0 then
+        return only_us("herdr reported no running sessions")
+      end
+      return sessions, nil
+    end
+
+    -- Enumeration on an explicit socket, for building pickers.
+    function M.panes_on(socket)
+      local result, err = M.request(socket, "pane.list")
+      if not result then
+        return nil, err
+      end
+      return result.panes or {}, nil
+    end
+
+    function M.workspaces_on(socket)
+      local result, err = M.request(socket, "workspace.list")
+      if not result then
+        return nil, err
+      end
+      return result.workspaces or {}, nil
+    end
+
+    -- Is this target still the exact terminal it was when it was picked?
+    --
+    -- terminal_id is the whole point: a pane id names a slot and herdr can
+    -- reissue it after that pane closes, so "w2:p1 still exists" is not the same
+    -- question as "w2:p1 is still the pane you chose". Returns (pane, nil) or
+    -- (nil, reason).
+    function M.verify_target(t)
+      if type(t) ~= "table" or type(t.pane_id) ~= "string" then
+        return nil, "not a pane target"
+      end
+      local socket, socket_err = M.target_socket(t)
+      if not socket then
+        return nil, socket_err
+      end
+
+      local result, err = M.request(socket, "pane.get", { pane_id = t.pane_id })
+      if not result or not result.pane then
+        return nil, string.format("%s is gone (%s)", M.target_label(t), tostring(err or "no such pane"))
+      end
+      local pane = result.pane
+      if t.terminal_id and pane.terminal_id and pane.terminal_id ~= t.terminal_id then
+        return nil, string.format("%s is now a different terminal — the pane you picked has closed",
+          M.target_label(t))
+      end
+      return pane, nil
+    end
+
+    -- What is actually running in a target, as a lowercase name plus the raw
+    -- process list. This is how a caller can decide how to talk to a pane
+    -- instead of assuming: an ipython needs a blank line to close a pasted
+    -- block, a bash does not.
+    function M.process_summary(t)
+      local socket, socket_err = M.target_socket(t)
+      if not socket then
+        return nil, socket_err
+      end
+      local result, err = M.request(socket, "pane.process_info", { pane_id = t.pane_id })
+      local procs = result and result.process_info and result.process_info.foreground_processes or nil
+      if not procs then
+        return nil, err or "no process info"
+      end
+
+      -- Same scoring as f_visi_h_pane's REPL hunt: an ipython in the cmdline is
+      -- the strong signal, a bare python process the weak one. Anything else is
+      -- reported by name so a caller can show it.
+      local best, best_score
+      for _, p in ipairs(procs) do
+        local name = (p.name or ""):lower()
+        local cmdline = (p.cmdline or ""):lower()
+        local score
+        if cmdline:find("ipython", 1, true) then
+          score, name = 3, "ipython"
+        elseif name:match("^i?python[%d.]*$") then
+          score = 2
+        elseif name ~= "" then
+          score = 1
+        end
+        if score and score > (best_score or 0) then
+          best, best_score = name, score
+        end
+      end
+      return { name = best, processes = procs }, nil
+    end
+
+    -- Human-readable target, for messages and picker rows.
+    function M.target_label(t)
+      if type(t) ~= "table" then
+        return tostring(t)
+      end
+      local where = t.pane_id or t.workspace_id or "?"
+      if t.session and not t.is_this then
+        return t.session .. "/" .. where
+      end
+      return where
+    end
+
+    ---------------------------------------------------------------------------
+    -- input and creation, on an explicit target
+    ---------------------------------------------------------------------------
+    --
+    -- Socket-aware twins of the send verbs above. Each verifies the target
+    -- first, so a closed pane is an error message rather than keystrokes going
+    -- nowhere — the same guarantee the surface registry gives for our own tabs.
+
+    function M.send_input_to(t, text, keys)
+      local pane, err = M.verify_target(t)
+      if not pane then
+        return nil, err
+      end
+      local socket = M.target_socket(t)
+      local params = { pane_id = t.pane_id }
+      if text then
+        params.text = text
+      end
+      if keys then
+        params.keys = type(keys) == "string" and { keys } or keys
+      end
+      return M.request(socket, "pane.send_input", params)
+    end
+
+    function M.send_keys_to(t, keys)
+      local pane, err = M.verify_target(t)
+      if not pane then
+        return nil, err
+      end
+      return M.request(M.target_socket(t), "pane.send_keys",
+        { pane_id = t.pane_id, keys = type(keys) == "string" and { keys } or keys })
+    end
+
+    function M.read_from(t, source, lines)
+      local pane, err = M.verify_target(t)
+      if not pane then
+        return nil, err
+      end
+      local result, read_err = M.request(M.target_socket(t), "pane.read", {
+        pane_id = t.pane_id,
+        source = source or "visible",
+        lines = lines or 40,
+      })
+      if not result then
+        return nil, read_err
+      end
+      return result.read.text, nil
+    end
+
+    -- Run a command in a target, with the same prompt/echo pacing as M.run.
+    function M.run_on(t, cmd)
+      local pane, err = M.verify_target(t)
+      if not pane then
+        return nil, err
+      end
+      return run_in(M.target_socket(t), t.pane_id, cmd)
+    end
+
+    function M.focus_target(t)
+      local pane, err = M.verify_target(t)
+      if not pane then
+        return nil, err
+      end
+      local socket = M.target_socket(t)
+      -- Focusing a pane in another workspace only lands if that workspace is
+      -- focused too, so do both. Order matters: workspace first.
+      if pane.workspace_id then
+        M.request(socket, "workspace.focus", { workspace_id = pane.workspace_id })
+      end
+      return M.request(socket, "pane.focus", { pane_id = t.pane_id })
+    end
+
+    -- A new pane in a target's workspace, as a split. Unlike a popup this comes
+    -- back with a real pane_id, so it can be sent to again and again — which is
+    -- what makes a reusable scratch shell possible at all.
+    --
+    -- direction is herdr's SplitDirection enum, and it has exactly two members:
+    -- "right" and "down".
+    function M.split_pane(t, opts)
+      opts = opts or {}
+      local socket, socket_err = M.target_socket(t)
+      if not socket then
+        return nil, socket_err
+      end
+
+      local params = {
+        direction = opts.direction == "down" and "down" or "right",
+        focus = opts.focus == true,
+      }
+      if opts.cwd then
+        params.cwd = opts.cwd
+      end
+      if opts.env then
+        params.env = opts.env
+      end
+      if opts.ratio then
+        params.ratio = opts.ratio
+      end
+      -- workspace_id puts the split in another workspace; target_pane_id splits
+      -- a specific pane. Sending a workspace we are not in without a pane id is
+      -- the normal case for a remote split.
+      if t.workspace_id then
+        params.workspace_id = t.workspace_id
+      end
+      if t.pane_id and opts.split_this_pane then
+        params.target_pane_id = t.pane_id
+      end
+
+      -- Diff by terminal_id so a reissued pane id cannot look like a new pane.
+      local seen = {}
+      for _, p in ipairs(M.panes_on(socket) or {}) do
+        if p.terminal_id then
+          seen[p.terminal_id] = true
+        end
+      end
+
+      local result, err = M.request(socket, "pane.split", params)
+      if not result then
+        return nil, err
+      end
+
+      local pane = result.pane
+      if not pane then
+        -- Same defensive shape as open_plugin_pane: take the pane that appeared.
+        for _ = 1, 25 do
+          for _, p in ipairs(M.panes_on(socket) or {}) do
+            if p.terminal_id and not seen[p.terminal_id] then
+              pane = p
+              break
+            end
+          end
+          if pane then
+            break
+          end
+          vim.wait(60)
+        end
+      end
+      if not pane then
+        return nil, "pane.split returned without a pane, and none appeared in pane.list"
+      end
+
+      return {
+        session = t.session,
+        socket = t.socket,
+        is_this = t.is_this,
+        pane_id = pane.pane_id,
+        terminal_id = pane.terminal_id,
+        workspace_id = pane.workspace_id,
+        tab_id = pane.tab_id,
+      }, nil
+    end
+
+    -- A new tab in a target's workspace, in a target's session. The
+    -- cross-session twin of M.new_tab; returns a target table, not a registry
+    -- record, because a tab in someone else's session is a pointer like any
+    -- other target.
+    function M.new_tab_on(t, opts)
+      opts = opts or {}
+      local socket, socket_err = M.target_socket(t)
+      if not socket then
+        return nil, socket_err
+      end
+
+      -- Tag the label even in a foreign session: it is our tab, we made it, and
+      -- the tag is what tells us apart from anything already living there.
+      local params = { focus = opts.focus == true, label = M.tagged(opts.label) }
+      if opts.cwd then
+        params.cwd = opts.cwd
+      end
+      if opts.env then
+        params.env = opts.env
+      end
+      params.workspace_id = t.workspace_id
+      if not params.workspace_id and M.is_this_socket(socket) then
+        local pane = M.this_pane()
+        params.workspace_id = pane and pane.workspace_id or nil
+      end
+
+      local result, err = M.request(socket, "tab.create", params)
+      if not result then
+        return nil, err
+      end
+
+      -- tab.create labels the tab, not the pane inside it. Label the root pane
+      -- too, the way M.apply_tag does for a local tab: it is what makes the pane
+      -- identifiable in herdr's own UI and in a pane.list, which matters most
+      -- precisely when the tab is in a session you are not looking at.
+      M.request(socket, "pane.rename",
+        { pane_id = result.root_pane.pane_id, label = M.tagged(opts.label) })
+
+      return {
+        session = t.session,
+        socket = t.socket,
+        is_this = t.is_this,
+        pane_id = result.root_pane.pane_id,
+        terminal_id = result.root_pane.terminal_id,
+        tab_id = result.tab.tab_id,
+        workspace_id = result.tab.workspace_id,
+        label = result.tab.label,
+      }, nil
     end
 
     ---------------------------------------------------------------------------

@@ -2,6 +2,10 @@ vim.keymap.set("n","-","<cmd>Oil --float<CR>",{desc="Open parent directory in Oi
 vim.keymap.set("n", "<leader>tr", ":ToggleRelativeNumber<CR>", { silent = true })
 vim.keymap.set("n", "zä", ":FoldFunctions<CR>", { silent = true })
 
+vim.keymap.set('i', '˜', '~', { noremap = true })
+vim.keymap.set('i', 'ˋ', '`', { noremap = true })
+
+
 
 local keymap = vim.keymap -- for conciseness
 local km = vim.keymap

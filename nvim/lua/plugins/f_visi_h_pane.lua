@@ -8,6 +8,16 @@
 --        -> open it in visidata, in a new herdr tab
 --        -> Enter in that tab deletes the csv and closes the tab
 --
+-- Both ends of that are set from Åä (see f_target.lua):
+--
+--   ftarget.visi   where the vd tab is created — this workspace, or any
+--                  workspace of any running session
+--   ftarget.repl   which python the export line is sent to. A pinned pane wins;
+--                  otherwise this falls back to iron-if-visible and then to
+--                  hunting for a python process, which is what it always did.
+--                  The pin is filetype-blind, so a pin that is not running
+--                  python is refused rather than sent a DataFrame.
+--
 --   :FVisiHPane[!] [expr]   same thing; ! opens the tab unfocused, and an
 --                           explicit expression beats the word under the cursor
 --                           (so :FVisiHPane df.head(20) works)
@@ -70,6 +80,10 @@ return {
     -- Shared with iron.lua, so vd comes from the same venv as the REPL that
     -- wrote the csv.
     local fvenv = require("f_venv")
+
+    -- Also shared with iron.lua: where the vd tab is created (ftarget.visi) and
+    -- which REPL the export is sent to (ftarget.repl). Åä sets both.
+    local ftarget = require("f_target")
 
     local function echo(msg, hl)
       vim.api.nvim_echo({ { msg, hl or "Normal" } }, true, {})
@@ -151,8 +165,12 @@ return {
     -- Scored rather than first-match, because "python" in the process name is
     -- also true of a script that merely happens to be running. An ipython in
     -- the cmdline is the strong signal; a bare python process is the weak one.
-    -- Scoped to our own workspace, so a REPL in someone else's workspace is
-    -- never typed into.
+    --
+    -- This used to be scoped to our own workspace. It no longer is: Åä can point
+    -- the REPL at any workspace, so refusing to *discover* one next door would
+    -- be an arbitrary limit — and a pane is only ever discovered here as a
+    -- fallback, when nothing has been pinned. It still stays inside our own
+    -- session, because that is the only one pane.list can see.
     --
     -- Returns (pane, description) or (nil, reason).
     local function find_herdr_python_pane(fh)
@@ -161,13 +179,11 @@ return {
         return nil, err
       end
 
-      local me = fh.this_pane()
-      local my_workspace = me and me.workspace_id
       local my_pane = vim.env.HERDR_PANE_ID
 
       local best, best_score, best_why
       for _, p in ipairs(result.panes or {}) do
-        if p.pane_id ~= my_pane and (not my_workspace or p.workspace_id == my_workspace) then
+        if p.pane_id ~= my_pane then
           local info = fh.call("pane.process_info", { pane_id = p.pane_id })
           local procs = info and info.process_info and info.process_info.foreground_processes or {}
           for _, proc in ipairs(procs) do
@@ -187,9 +203,63 @@ return {
       end
 
       if not best then
-        return nil, "no python process found in any pane of this workspace"
+        return nil, "no python process found in any pane of this session"
       end
       return best, string.format("%s running %s", best.pane_id, best_why)
+    end
+
+    -- Is this what a python REPL looks like? Shared by the pinned-pane check and
+    -- reporting, so both agree on the answer.
+    local function is_python_name(name)
+      return name ~= nil and (name == "ipython" or name:match("^i?python[%d.]*$") ~= nil)
+    end
+
+    -- Which REPL the export line goes to.
+    --
+    -- Åä's REPL pin is the answer when there is one, so Åss and Åv cannot end up
+    -- talking to two different pythons. Otherwise this falls back to what it
+    -- always did: iron if it is up and on screen, else hunt for a python process.
+    --
+    -- The pin is filetype-blind by design — it exists so a bash line and a python
+    -- line can both go to one chosen pane — so a pin is not automatically a
+    -- python. Exporting a DataFrame into bash would produce a confusing pile of
+    -- shell errors and no csv, so an unsuitable pin is refused here instead.
+    --
+    -- Returns (kind, info, target) where target is a f-herdr target table for the
+    -- herdr kinds and nil for iron, or (nil, nil, nil, reason).
+    local function pick_repl(fh)
+      local pinned = ftarget.repl
+      if pinned.kind == "pane" then
+        local pane, verr = fh.verify_target(pinned)
+        if not pane then
+          return nil, nil, nil, tostring(verr) .. " — press Åä to pick another"
+        end
+        local info = fh.process_summary(pinned)
+        local name = info and info.name
+        if not is_python_name(name) then
+          return nil, nil, nil, string.format(
+            "the pinned REPL %s is running %s, not python — press Åä to pick a python pane",
+            fh.target_label(pinned), tostring(name or "nothing recognisable"))
+        end
+        return "pinned", string.format("%s running %s", fh.target_label(pinned), name), pinned, nil
+      end
+
+      local iron = check_iron_python_repl()
+      if iron.running and iron.visible then
+        return "iron", iron.info, nil, nil
+      end
+
+      local pane, why = find_herdr_python_pane(fh)
+      if not pane then
+        return nil, nil, nil, "iron REPL not visible, and " .. tostring(why)
+      end
+      -- A discovered pane is in our own session, so it needs no socket.
+      return "herdr", why, {
+        is_this = true,
+        pane_id = pane.pane_id,
+        terminal_id = pane.terminal_id,
+        workspace_id = pane.workspace_id,
+      }, nil
     end
 
     -- visidata, as an absolute path out of the buffer's own venv (see f_venv:
@@ -267,19 +337,12 @@ return {
         echo("copied f_visi_nvim_tool.py -> " .. buf_dir, "MoreMsg")
       end
 
-      -- Pick the REPL: iron if it is up and on screen, otherwise a python
-      -- process in one of this workspace's herdr panes.
-      local iron = check_iron_python_repl()
-      local target, target_info, repl_pane
-      if iron.running and iron.visible then
-        target, target_info = "iron", iron.info
-      else
-        local pane, why = find_herdr_python_pane(fh)
-        if not pane then
-          echo("no target: iron REPL not visible, and " .. why, "WarningMsg")
-          return
-        end
-        target, target_info, repl_pane = "herdr", why, pane
+      -- Which python writes the csv: Åä's pin if there is one, else iron, else a
+      -- discovered python pane.
+      local target, target_info, repl_target, repl_err = pick_repl(fh)
+      if not target then
+        echo("no target: " .. tostring(repl_err), "WarningMsg")
+        return
       end
 
       -- Tab label and csv name. The expression can be anything python accepts,
@@ -295,12 +358,39 @@ return {
         csv_abs = cwd .. "/" .. name .. ".csv"
       until vim.fn.filereadable(csv_abs) == 0 and not fh.surfaces[name]
 
-      local rec, tab_err = fh.new_tab({
-        label = name,
-        name = name,
-        focus = opts.focus ~= false,
-        cwd = cwd,
-      })
+      -- Where the vd tab goes: this workspace, or the one Åä picked, which may be
+      -- in another session. `cwd` is passed explicitly and every path here is
+      -- absolute, so nothing else has to change for a foreign workspace.
+      --
+      -- For a local tab this stays new_tab(), which registers the surface, so the
+      -- tab still shows up in :HerdrSurfaces. A tab in another session cannot be
+      -- registered — the registry checks liveness with pane.list on our own
+      -- socket — so new_tab_on() hands back a target table instead. Both are
+      -- driven through run_on below, which takes either.
+      local rec, tab_err, vd_target
+      if ftarget.visi.kind == "local" then
+        rec, tab_err = fh.new_tab({
+          label = name,
+          name = name,
+          focus = opts.focus ~= false,
+          cwd = cwd,
+        })
+        if rec then
+          vd_target = {
+            is_this = true,
+            pane_id = rec.pane_id,
+            terminal_id = rec.terminal_id,
+            workspace_id = rec.workspace_id,
+          }
+        end
+      else
+        rec, tab_err = fh.new_tab_on(ftarget.visi, {
+          label = name,
+          focus = opts.focus ~= false,
+          cwd = cwd,
+        })
+        vd_target = rec
+      end
       if not rec then
         echo("herdr: could not create tab: " .. tostring(tab_err), "ErrorMsg")
         return
@@ -317,7 +407,7 @@ return {
       echo("=== f_visi_h_pane ===", "Title")
       echo("expr        " .. expr)
       echo("repl        " .. target .. "  (" .. tostring(target_info) .. ")")
-      echo("tab         " .. rec.name .. "  " .. tostring(rec.tab_id), "MoreMsg")
+      echo("tab         " .. (rec.name or name) .. "  " .. fh.target_label(vd_target), "MoreMsg")
       echo("csv         " .. csv_abs, "MoreMsg")
       echo("vd          " .. vd)
 
@@ -330,10 +420,10 @@ return {
           sent_err = "iron.core disappeared between check and send"
         end
       else
-        -- f-herdr's run(): wait for a prompt, paste, wait for the echo, then a
-        -- real Enter key. A trailing "\n" in the text would be inserted
-        -- literally by the line editor instead of submitting the line.
-        local _, run_err = fh.run(repl_pane.pane_id, code)
+        -- f-herdr's run_on(): verify the target, wait for a prompt, paste, wait
+        -- for the echo, then a real Enter key. A trailing "\n" in the text would
+        -- be inserted literally by the line editor instead of submitting the line.
+        local _, run_err = fh.run_on(repl_target, code)
         sent_err = run_err
       end
       if sent_err then
@@ -345,15 +435,25 @@ return {
       -- REPL is the only thing that knows when the write finished, and it has
       -- no way to report back. "\\n" is passed through to printf, which turns
       -- it into a newline — a real newline here would be pasted as one.
+      --
+      -- The wait is bounded. It used to be `until [ -f ... ]; do sleep 0.2; done`,
+      -- which never gives up: an export that fails in the REPL left the tab
+      -- spinning for good. That was survivable while both ends were always in
+      -- this workspace, but the REPL and this tab can now be in different
+      -- sessions, and a `herdr --remote` session runs on another host, where the
+      -- two do not even share a filesystem and the csv can never arrive. 300
+      -- turns at 0.2s is a minute, then it says so.
       local q = vim.fn.shellescape(csv_abs)
       local shell_cmd = string.format(
-        "until [ -f %s ]; do sleep 0.2; done && %s %s;"
+        "i=0; while [ ! -f %s ] && [ $i -lt 300 ]; do sleep 0.2; i=$((i+1)); done;"
+        .. " if [ -f %s ]; then %s %s;"
+        .. " else printf '\\ntimed out after 60s waiting for the csv — did the export fail?\\n'; fi;"
         .. " printf '\\nPress Enter to delete the csv and close this tab...'; read -r _; rm -f %s; exit",
-        q, vim.fn.shellescape(vd), q, q)
+        q, q, vim.fn.shellescape(vd), q, q)
 
-      local _, cmd_err = fh.run(rec.name, shell_cmd)
+      local _, cmd_err = fh.run_on(vd_target, shell_cmd)
       if cmd_err then
-        echo("herdr: could not start vd in " .. rec.name .. ": " .. tostring(cmd_err), "ErrorMsg")
+        echo("herdr: could not start vd in " .. (rec.name or name) .. ": " .. tostring(cmd_err), "ErrorMsg")
       end
     end
 
@@ -400,6 +500,11 @@ return {
       end
       add("herdr", "up", "DiagnosticOk")
 
+      -- Both destinations Åä controls, so "why did it go there" is answerable
+      -- without pressing anything.
+      add("repl pin", ftarget.describe_repl())
+      add("visi tab", ftarget.describe_visi())
+
       local iron = check_iron_python_repl()
       add("iron", string.format("running=%s visible=%s (%s)",
         tostring(iron.running), tostring(iron.visible), iron.info))
@@ -407,9 +512,11 @@ return {
       local pane, why = find_herdr_python_pane(fh)
       add("herdr repl", pane and why or ("none — " .. tostring(why)), pane and "DiagnosticOk" or nil)
 
-      local chosen = (iron.running and iron.visible) and "iron"
-        or (pane and ("herdr pane " .. pane.pane_id) or "NONE")
-      add("would use", chosen, chosen == "NONE" and "ErrorMsg" or "MoreMsg")
+      -- The real answer, from the same function the gesture uses, so the dry run
+      -- cannot drift from what actually happens.
+      local kind, info, _, pick_err = pick_repl(fh)
+      add("would use", kind and (kind .. "  (" .. tostring(info) .. ")") or ("NONE — " .. tostring(pick_err)),
+        kind and "MoreMsg" or "ErrorMsg")
 
       vim.api.nvim_echo(lines, true, {})
     end, { desc = "visi: report the REPL and vd this would use, without exporting" })
