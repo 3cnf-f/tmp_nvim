@@ -6,6 +6,9 @@ vim.keymap.set("n", "zä", ":FoldFunctions<CR>", { silent = true })
 local keymap = vim.keymap -- for conciseness
 local km = vim.keymap
 
+vim.keymap.set('i', '˜', '~', { noremap = true })
+vim.keymap.set('i', 'ˋ', '`', { noremap = true })
+
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 -- Remap H to move to the first non-blank character
 vim.keymap.set({'n', 'v'}, 'H', '^', { desc = "Move to first non-blank character" })
