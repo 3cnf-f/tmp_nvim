@@ -77,6 +77,7 @@ git clone https://github.com/3cnf-f/tmp_nvim.git ~/.config/
 ```bash
 cat ~/.config/addto_bashrc >>~/.bashrc &&\
 cat ~/.config/.bash_aliases >>~/.bash_aliases &&\
+cat ~/.config/addto_inputrc >>~/.inputrc &&\
 mkdir ~/.ssh &&\
 cat ~/.config/addto_ssh_config >>~/.ssh/config &&\
 source ~/.bashrc &&\
