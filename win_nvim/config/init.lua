@@ -36,6 +36,18 @@ vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Focus right split" })
 
 -- Resizing
 vim.keymap.set("n", "<leader>w=", "<C-w>=", { desc = "Equalize split sizes" })
+-- Normal mode: Alt + Arrow keys to navigate splits
+vim.keymap.set("n", "<M-Left>", "<C-w>h", { desc = "Focus left split" })
+vim.keymap.set("n", "<M-Down>", "<C-w>j", { desc = "Focus lower split" })
+vim.keymap.set("n", "<M-Up>", "<C-w>k", { desc = "Focus upper split" })
+vim.keymap.set("n", "<M-Right>", "<C-w>l", { desc = "Focus right split" })
+
+-- Terminal mode: jump out of terminal splits directly
+vim.keymap.set("t", "<M-Left>", "<C-\\><C-n><C-w>h", { desc = "Focus left split from terminal" })
+vim.keymap.set("t", "<M-Down>", "<C-\\><C-n><C-w>j", { desc = "Focus lower split from terminal" })
+vim.keymap.set("t", "<M-Up>", "<C-\\><C-n><C-w>k", { desc = "Focus upper split from terminal" })
+vim.keymap.set("t", "<M-Right>", "<C-\\><C-n><C-w>l", { desc = "Focus right split from terminal" })
+
 
 
 return M
