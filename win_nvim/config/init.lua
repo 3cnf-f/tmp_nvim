@@ -5,15 +5,17 @@ _G.hello = "world"
 vim.g.hello = "world"
 
 -- Visual mode: Alt+y (or Alt+Shift+y) yanks selection into register 'k'
-vim.keymap.set("x", "<M-y>", '"ky', { desc = "Yank selection to register k" })
-vim.keymap.set("x", "<M-S-y>", '"ky', { desc = "Yank selection to register k" })
+vim.keymap.set("x", "<M-y>", '"+y', { desc = "Yank selection to register k" })
 
 -- Normal mode: Alt+y + Alt+y yanks entire line into register 'k' (like 'yy')
-vim.keymap.set("n", "<M-y><M-y>", '"kyy', { desc = "Yank whole line to register k" })
+vim.keymap.set("n", "<M-y><M-y>", '"+yy', { desc = "Yank whole line to register k" })
 
 -- Normal mode: Alt+Shift+y yanks to end of line into register 'k' (like 'Y')
-vim.keymap.set("n", "<M-S-y>", '"kY', { desc = "Yank rest of line to register k" })
-vim.keymap.set("n", "<M-Y>", '"kY', { desc = "Yank rest of line to register k" })
+vim.keymap.set("n", "<M-Y>", function()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  vim.cmd('normal! gg"+yG')
+  vim.api.nvim_win_set_cursor(0, pos)
+end, { desc = "Yank entire buffer to + register" })
 -- Set space as leader
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
